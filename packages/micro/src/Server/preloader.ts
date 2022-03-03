@@ -1,6 +1,6 @@
 // @ts-nocheck todo: add types
 
-import { createGraph, extname } from "./deps.ts";
+import { createGraph, extname } from "../deps.ts";
 
 const preloader = async (path, map, cache) => {
   const { cacheInfo, load } = cache;
@@ -25,14 +25,10 @@ const preloader = async (path, map, cache) => {
   return attributes.join(", ");
 };
 
-export const ultraloader = async ({ importmap, cache }) => {
+export const microloader = async ({ importmap, cache }) => {
   const link = await preloader([
     importmap.imports["react"],
     importmap.imports["react-dom"],
-    importmap.imports["wouter"],
-    importmap.imports["swr"],
-    importmap.imports["react-helmet"],
-    importmap.imports["ultra/cache"],
   ], (specifier) => {
     if (extname(specifier) === ".js") {
       return specifier;

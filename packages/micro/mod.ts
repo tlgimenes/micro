@@ -1,3 +1,4 @@
 export { default as Head } from "./src/Components/Head.tsx";
-export { default as Main } from "./src/Components/Main.tsx";
-export { default as Script } from "./src/Components/Script.tsx";
+export { default as Root } from "./src/Components/Root.tsx";
+
+export type { HtmlProps } from './src/types.ts'

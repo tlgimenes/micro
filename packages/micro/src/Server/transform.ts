@@ -1,10 +1,10 @@
-import { esbuild, parse } from "./deps.ts";
+import { esbuild, parse } from "../deps.ts";
 import { isDev } from "./env.ts";
 import type {
   CallExpression,
   HasSpan,
 } from "https://deno.land/x/swc@0.1.4/types/options.ts";
-import { TransformOptions } from "./types.ts";
+import { TransformOptions } from "../types.ts";
 
 let offset = 0;
 let length = 0;

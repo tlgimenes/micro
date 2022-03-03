@@ -1,1 +1,0 @@
-export { default as server } from './src/server/server.ts'

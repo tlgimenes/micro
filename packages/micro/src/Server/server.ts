@@ -4,15 +4,22 @@ import {
   LRU,
   readableStreamFromReader,
   serve,
-} from "./deps.ts";
+} from "../deps.ts";
 import assets from "./assets.ts";
 import transform from "./transform.ts";
-import render from "./render.ts";
-import preloader, { ultraloader } from "./preloader.ts";
+import render from "./render.tsx";
+import preloader, { microloader } from "./preloader.ts";
 import { jsify, jsxify, tsxify } from "./resolver.ts";
 import { isDev, port } from "./env.ts";
 
-import { StartOptions } from "./types.ts";
+import type { Options as RenderOptions } from "./render.tsx";
+
+interface Options {
+  importmap: RenderOptions["importmap"];
+  dir?: string;
+  root?: string;
+  env?: Record<string, unknown>;
+}
 
 const memory = new LRU(500);
 
@@ -20,14 +27,13 @@ const server = async (
   {
     importmap,
     dir = "src",
-    root = "http://localhost:8000",
-    lang = "en",
+    root = "http://localhost:3000",
     env,
-  }: StartOptions,
+  }: Options,
 ) => {
   const cache = createCache();
   const fileRootUri = `file://${Deno.cwd()}/${dir}`;
-  const link = await ultraloader({ importmap, cache });
+  const link = await microloader({ importmap, cache })
   const serverStart = Math.ceil(+new Date() / 100);
 
   const handler = async (request: Request) => {
@@ -123,16 +129,10 @@ const server = async (
       return await transpilation(tsx);
     }
 
+    const stream = render({ url, importmap });
+
     return new Response(
-      await render({
-        url,
-        root,
-        importmap,
-        lang,
-        cacheBuster,
-        // 0 to disable buffering which stops streaming
-        bufferSize: 0,
-      }),
+      stream,
       {
         headers: {
           "content-type": "text/html; charset=utf-8",
@@ -142,9 +142,8 @@ const server = async (
     );
   };
 
-  console.log(`Ultra running ${root}`);
-  //@ts-ignore any
-  return serve(handler, { port: +port });
+  console.log(`Micro running ${root}`);
+  return serve(handler, { port: Number(port) });
 };
 
 export default server;
