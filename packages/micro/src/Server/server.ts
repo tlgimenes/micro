@@ -91,7 +91,7 @@ const server = async (
           env,
         });
         const t1 = performance.now();
-        console.log(`Transpile ${file.replace(dir, "")} in ${t1 - t0}ms`);
+        console.log(`Transpile ${file.replace(dir, "")} in ${(t1 - t0).toFixed(0)}ms`);
         if (!isDev) memory.set(url.pathname, js);
       }
 

@@ -1,21 +1,25 @@
 import React, { useMemo } from "react";
 import type { PropsWithChildren } from "react";
-import { Importmap } from "../types.ts";
+
+import type { Importmap } from "../types.ts";
 
 interface Props {
   importmap: Importmap;
 }
 
-const rootId = `__micro_root`;
-
 const initScript = ({ importmap: { imports } }: Props) => `
+const DOMElement = document.getElementsByTagName("html")
+
 import { createElement } from "${imports["react"]}";
 import { hydrateRoot } from "${imports["react-dom"]}"
-import App from "/html.server.js"
+import Html from "/html.client.js"
+
+
+console.log(DOMElement)
 
 hydrateRoot(
-  document.getElementByTagName("html"), 
-  createElement(App)
+  DOMElement, 
+  createElement(Html)
 )
 `;
 
@@ -24,7 +28,7 @@ function Root({ children, importmap }: PropsWithChildren<Props>) {
 
   return (
     <>
-      <div id={rootId}>{children}</div>
+      {children}
       <script
         defer
         type="module"

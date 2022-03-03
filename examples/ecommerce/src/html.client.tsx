@@ -1,9 +1,11 @@
 import React from "react";
 import { Head } from "micro";
-import App from "./app.server.tsx";
+
 import Seo from "./pages/Seo.server.tsx";
 
 import { Router } from "wouter";
+import Layout from "./pages/Layout.tsx";
+import Pages from "./pages/index.tsx";
 
 function Html() {
   return (
@@ -14,7 +16,9 @@ function Html() {
           <Seo />
         </head>
         <body>
-          <App />
+          <Layout>
+            <Pages />
+          </Layout>
         </body>
       </html>
     </Router>

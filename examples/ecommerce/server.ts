@@ -3,4 +3,5 @@ import importmap from "../../importmap.json" assert { type: "json" };
 
 server({
   importmap,
+  dir: './'
 });

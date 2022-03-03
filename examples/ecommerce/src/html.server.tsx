@@ -1,12 +1,13 @@
 import React, { PropsWithChildren } from "react";
 import { Head, Root } from "micro";
-import App from "./app.server.tsx";
 import Seo from "./pages/Seo.server.tsx";
 import type { HtmlProps } from "micro";
 
 import { Router } from "wouter";
 
 import staticLocationHook from "wouter/static-location";
+import Layout from "./pages/Layout.tsx";
+import Pages from "./pages/index.tsx";
 
 function Html({ importmap, url }: PropsWithChildren<HtmlProps>) {
   return (
@@ -18,7 +19,9 @@ function Html({ importmap, url }: PropsWithChildren<HtmlProps>) {
         </head>
         <body>
           <Root importmap={importmap}>
-            <App />
+            <Layout>
+              <Pages />
+            </Layout>
           </Root>
         </body>
       </html>
