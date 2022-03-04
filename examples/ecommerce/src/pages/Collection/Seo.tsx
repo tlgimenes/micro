@@ -1,9 +1,12 @@
-import React from 'react'
+import React from "react";
 
-function Seo () {
+function Seo() {
   return (
-    <meta name="robots" content="index,follow" />
-  )
+    <>
+      <meta name="robots" content="index,follow" />
+      <title>Collection</title>
+    </>
+  );
 }
 
-export default Seo
+export default Seo;

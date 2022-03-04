@@ -1,16 +1,15 @@
 import React from "react";
-import { Head } from "micro";
-
-import Seo from "./pages/Seo.server.tsx";
-
 import { Router } from "wouter";
-import Layout from "./pages/Layout.tsx";
+
+import Head from "./Head.tsx";
 import Pages from "./pages/index.tsx";
+import Layout from "./pages/Layout.tsx";
+import Seo from "./pages/Seo.server.tsx";
 
 function Html() {
   return (
     <Router>
-      <html>
+      <>
         <head>
           <Head />
           <Seo />
@@ -20,7 +19,7 @@ function Html() {
             <Pages />
           </Layout>
         </body>
-      </html>
+      </>
     </Router>
   );
 }

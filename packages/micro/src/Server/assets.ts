@@ -1,6 +1,7 @@
 import { extname, mime, walk } from "../deps.ts";
 
 const assets = async (dir: string) => {
+  
   const meta = {
     raw: new Map(),
     transpile: new Map(),

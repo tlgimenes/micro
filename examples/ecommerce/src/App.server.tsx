@@ -1,13 +1,13 @@
 import React, { PropsWithChildren } from "react";
-import { Head, Root } from "micro";
-import Seo from "./pages/Seo.server.tsx";
-import type { HtmlProps } from "micro";
-
 import { Router } from "wouter";
-
 import staticLocationHook from "wouter/static-location";
-import Layout from "./pages/Layout.tsx";
+
+import { Head, Script } from "../../../packages/micro/mod.ts";
 import Pages from "./pages/index.tsx";
+import Layout from "./pages/Layout.tsx";
+import Seo from "./pages/Seo.server.tsx";
+
+import type { HtmlProps } from "../../../packages/micro/mod.ts";
 
 function Html({ importmap, url }: PropsWithChildren<HtmlProps>) {
   return (
@@ -18,11 +18,10 @@ function Html({ importmap, url }: PropsWithChildren<HtmlProps>) {
           <Seo />
         </head>
         <body>
-          <Root importmap={importmap}>
-            <Layout>
-              <Pages />
-            </Layout>
-          </Root>
+          <Layout>
+            <Pages />
+          </Layout>
+          <Script importmap={importmap} />
         </body>
       </html>
     </Router>

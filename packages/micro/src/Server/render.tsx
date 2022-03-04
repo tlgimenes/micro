@@ -1,7 +1,7 @@
 import React from "react";
 import { renderToPipeableStream } from "react-dom/server";
 
-import Html from "html";
+import App from "App";
 
 import { PassThrough } from "../deps.ts";
 import type { Importmap } from "../types.ts";
@@ -29,7 +29,9 @@ const render = (
   let shell = start;
 
   const { pipe } = renderToPipeableStream(
-    <Html importmap={importmap} url={url} />,
+    <html>
+      <App importmap={importmap} url={url} />
+    </html>,
     {
       onError: console.error,
       onErrorShell: console.error,

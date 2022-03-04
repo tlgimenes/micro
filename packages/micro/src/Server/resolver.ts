@@ -11,3 +11,7 @@ export const jsxify = (file: string) => {
 export const tsxify = (file: string) => {
   return file.replace(extname(file), ".tsx");
 };
+
+export const tsify = (file: string) => {
+  return file.replace(extname(file), ".ts");
+};

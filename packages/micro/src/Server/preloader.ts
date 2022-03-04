@@ -1,40 +1,41 @@
 // @ts-nocheck todo: add types
 
-import { createGraph, extname } from "../deps.ts";
+import { createGraph, relative } from "../deps.ts";
+import type { Importmap } from "../types.ts";
 
-const preloader = async (path, map, cache) => {
+const isRemoteImport = (path: string) => /http(s)?:\/\//g.test(path);
+
+const preloadLink = (path: string) => `<${path}>; rel="modulepreload"`;
+
+/** 
+ * TODO: preload only required files 
+ * */
+const preloader = async (path, cache, root) => {
   const { cacheInfo, load } = cache;
 
-  const graph = await createGraph(path, {
+  const graph = await createGraph(`${root}${path}`, {
     cacheInfo,
     load,
   });
 
   const { modules } = graph.toJSON();
-  const attributes = [];
 
-  for (const { specifier } of modules) {
-    let path = map(specifier);
-    if (path) {
-      // esm.sh fix for deno
-      path = path.replace("/deno/", "/es2021/");
-      attributes.push(`<${path}>; rel="modulepreload"`);
-    }
-  }
+  const preloadPaths = modules
+    .map(({ specifier }) =>
+      isRemoteImport(specifier)
+        ? specifier.replace("/deno/", "/es2021/") // esm.sh fix for deno
+        : `/assets/${relative(root, specifier)}` // local import
+    )
+    .filter(preload => !preload.endsWith(path)); // remove self reference
 
-  return attributes.join(", ");
+  return preloadPaths.map(preloadLink).join(", ");
 };
 
-export const microloader = async ({ importmap, cache }) => {
-  const link = await preloader([
+export const microloader = ({ importmap }: { importmap: Importmap }) => {
+  return [
     importmap.imports["react"],
-    importmap.imports["react-dom"],
-  ], (specifier) => {
-    if (extname(specifier) === ".js") {
-      return specifier;
-    }
-  }, cache);
-  return link;
+    importmap.imports["react-dom/client"],
+  ].map(preloadLink).join(", ");
 };
 
 export default preloader;
