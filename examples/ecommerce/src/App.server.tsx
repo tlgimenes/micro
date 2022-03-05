@@ -1,31 +1,21 @@
-import React, { PropsWithChildren } from "react";
+import React from "react";
+import { SWRConfig } from "swr";
 import { Router } from "wouter";
 import staticLocationHook from "wouter/static-location";
 
-import { Head, Script } from "../../../packages/micro/mod.ts";
-import Pages from "./pages/index.tsx";
-import Layout from "./pages/Layout.tsx";
-import Seo from "./pages/Seo.server.tsx";
+import { Head, Main } from "./pages/index.tsx";
+import Shell from "./components/Shell.tsx";
 
-import type { HtmlProps } from "../../../packages/micro/mod.ts";
+import type { AppServerProps } from "../../../packages/micro/mod.ts";
 
-function Html({ importmap, url }: PropsWithChildren<HtmlProps>) {
+function App({ url }: AppServerProps) {
   return (
     <Router hook={staticLocationHook(url.pathname)}>
-      <html>
-        <head>
-          <Head />
-          <Seo />
-        </head>
-        <body>
-          <Layout>
-            <Pages />
-          </Layout>
-          <Script importmap={importmap} />
-        </body>
-      </html>
+      <SWRConfig value={{ suspense: true, provider: () => new Map() }}>
+        <Shell head={<Head />} main={<Main />} />
+      </SWRConfig>
     </Router>
   );
 }
 
-export default Html;
+export default App;

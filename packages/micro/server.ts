@@ -1,1 +1,1 @@
-export { default as server } from './src/Server/server.ts'
+export { default as server } from './src/server.ts'

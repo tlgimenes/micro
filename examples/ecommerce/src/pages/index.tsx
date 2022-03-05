@@ -1,24 +1,37 @@
-import React, { lazy, Suspense } from "react";
-import { Route, Switch } from "wouter";
+import React, { ComponentType, lazy } from "react";
+import { Route, RouteComponentProps, Switch } from "wouter";
 
-const Home = lazy(() => import("./Home/Template.tsx"));
-const NotFound = lazy(() => import("./404/Template.tsx"));
-const Search = lazy(() => import("./Search/Template.tsx"));
-const Product = lazy(() => import("./Product/Template.tsx"));
-const Collection = lazy(() => import("./Collection/Template.tsx"));
+const importPage = (page: string) => ({
+  head: lazy(() => import(`./${page}/index.tsx`).then(x => ({ default: x.Head}))),
+  main: lazy(() => import(`./${page}/index.tsx`).then(x => ({ default: x.Main})))
+})
 
-function Pages() {
+const Home = importPage('Home')
+const Product = importPage('Product')
+const NotFound = importPage('404')
+
+interface Props {
+  home: ComponentType<RouteComponentProps>;
+  product: ComponentType<RouteComponentProps>;
+  notFound: ComponentType<RouteComponentProps>;
+}
+
+function Router({ home, product, notFound }: Props) {
   return (
-    <Suspense fallback={<div>loading...</div>}>
-      <Switch>
-        <Route path="/" component={Home}></Route>
-        <Route path="/s" component={Search}></Route>
-        <Route path="/:slug/p" component={Product}></Route>
-        <Route path="/:slug" component={Collection}></Route>
-        <Route path="/*" component={NotFound}></Route>
-      </Switch>
-    </Suspense>
+    <Switch>
+      <Route path="/" component={home} />
+      <Route path="/:slug/p" component={product} />
+      <Route component={notFound} />
+    </Switch>
   );
 }
 
-export default Pages;
+
+export function Head() {
+  return <Router home={Home.head} product={Product.head} notFound={NotFound.head} />
+}
+
+export function Main() {
+  return <Router home={Home.main} product={Product.main} notFound={NotFound.main} />;
+}
+

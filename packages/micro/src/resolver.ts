@@ -1,4 +1,4 @@
-import { extname } from "../deps.ts";
+import { extname } from "./deps.ts";
 
 export const jsify = (file: string) => {
   return file.replace(extname(file), ".js");

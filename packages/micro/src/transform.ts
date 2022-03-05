@@ -1,4 +1,4 @@
-import { esbuild } from "../deps.ts";
+import { esbuild } from "./deps.ts";
 import { isDev } from "./env.ts";
 import { TransformOptions as EsBuildTransformOptions } from "https://deno.land/x/esbuild@v0.12.24/mod.js";
 

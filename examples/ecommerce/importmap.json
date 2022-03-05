@@ -5,7 +5,7 @@
     "react-dom/server": "https://esm.sh/react-dom@18.0.0-rc.1-next-17806594c-20220301/server.node?pin=v66",
     "wouter": "https://esm.sh/wouter?deps=react@18.0.0-rc.1-next-17806594c-20220301&bundle&pin=v66",
     "wouter/static-location": "https://esm.sh/wouter/static-location?deps=react@18.0.0-rc.1-next-17806594c-20220301&bundle&pin=v66",
-    "swr": "https://esm.sh/swr@1.0.0?deps=react@18.0.0-rc.1-next-17806594c-20220301&bundle&pin=v66",
+    "swr": "https://esm.sh/swr@1.2.2?deps=react@18.0.0-rc.1-next-17806594c-20220301&bundle&pin=v66",
     "App": "./src/App.server.tsx"
   }
 }

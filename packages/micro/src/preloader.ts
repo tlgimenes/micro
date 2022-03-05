@@ -1,15 +1,16 @@
 // @ts-nocheck todo: add types
+import { assets } from "./constants.ts";
+import { createGraph, relative } from "./deps.ts";
 
-import { createGraph, relative } from "../deps.ts";
-import type { Importmap } from "../types.ts";
+import type { Importmap } from "./importmap.ts";
 
 const isRemoteImport = (path: string) => /http(s)?:\/\//g.test(path);
 
 const preloadLink = (path: string) => `<${path}>; rel="modulepreload"`;
 
-/** 
- * TODO: preload only required files 
- * */
+/**
+ * TODO: preload only required files
+ */
 const preloader = async (path, cache, root) => {
   const { cacheInfo, load } = cache;
 
@@ -24,9 +25,9 @@ const preloader = async (path, cache, root) => {
     .map(({ specifier }) =>
       isRemoteImport(specifier)
         ? specifier.replace("/deno/", "/es2021/") // esm.sh fix for deno
-        : `/assets/${relative(root, specifier)}` // local import
+        : `${assets}/${relative(root, specifier)}` // local import
     )
-    .filter(preload => !preload.endsWith(path)); // remove self reference
+    .filter((preload) => !preload.endsWith(path)); // remove self reference
 
   return preloadPaths.map(preloadLink).join(", ");
 };

@@ -1,6 +1,6 @@
 import React from "react";
 
-function Seo() {
+export function Head() {
   return (
     <>
       <meta name="robots" content="index,follow" />
@@ -9,4 +9,10 @@ function Seo() {
   );
 }
 
-export default Seo;
+export function Main() {
+  return (
+    <>
+      <div>Hello World</div>
+    </>
+  );
+}
