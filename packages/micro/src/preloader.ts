@@ -1,8 +1,6 @@
 // @ts-nocheck todo: add types
-import { assets } from "./constants.ts";
+import { scripts } from "./constants.ts";
 import { createGraph, relative } from "./deps.ts";
-
-import type { Importmap } from "./importmap.ts";
 
 const isRemoteImport = (path: string) => /http(s)?:\/\//g.test(path);
 
@@ -25,7 +23,7 @@ const preloader = async (path, cache, root) => {
     .map(({ specifier }) =>
       isRemoteImport(specifier)
         ? specifier.replace("/deno/", "/es2021/") // esm.sh fix for deno
-        : `${assets}/${relative(root, specifier)}` // local import
+        : `${scripts}/${relative(root, specifier)}` // local import
     )
     .filter((preload) => !preload.endsWith(path)); // remove self reference
 

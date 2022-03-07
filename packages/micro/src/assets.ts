@@ -1,4 +1,4 @@
-import { extname, mime, walk } from "./deps.ts";
+import { extname, mime } from "./deps.ts";
 
 const assets = async (dir: string) => {
   // const meta = {

@@ -1,15 +1,17 @@
-import { assets as assetsPath, version } from "./constants.ts";
+import { scripts as assetsPath, version } from "./constants.ts";
 import { createCache, extname, serve } from "./deps.ts";
 import { isDev, port } from "./env.ts";
+import { readImportmap } from "./importmap.ts";
 import preloader, { microloader } from "./preloader.ts";
 import render from "./render.tsx";
 import transform from "./transform.ts";
-import type { Importmap } from "./importmap.ts";
-
-import type { Options as RenderOptions } from "./render.tsx";
+import { readTSConfig, TSConfig } from "./tsconfig.ts";
 
 interface Options {
-  importmap: RenderOptions["importmap"];
+  /** @default './importmap.json' */
+  importmap?: string;
+  /** @default './tsconfig.json' */
+  tsconfig?: string;
   dir?: string;
   root?: string;
 }
@@ -18,7 +20,17 @@ const cache = createCache();
 
 const allowedExtensions = new Set([".ts", ".tsx"]);
 
-const assets = async (url: URL, dir: string) => {
+const withLogger = (cb: (url: URL, ...args: any) => Promise<Response> | Response) => async (url: URL, ...args: any) => {
+  const start = performance.now()
+  const response = await cb(url, ...args)
+  const duration = (performance.now() - start).toFixed(0)
+  
+  console.info(`[${response.status}] ${duration}ms ${url.pathname}`)
+
+  return response
+}
+
+const assets = async (url: URL, dir: string, tsconfig: TSConfig, importmap: Deno.ImportMap) => {  
   const path = url.pathname.replace(assetsPath, "");
   const ext = extname(path);
 
@@ -28,8 +40,9 @@ const assets = async (url: URL, dir: string) => {
 
   try {
     const transpiled = await transform({
-      source: await Deno.readTextFile(`${dir}${path}`),
-      loader: ext === ".ts" ? "ts" : "tsx",
+      filepath: `${dir}${path}`,
+      tsconfig,
+      importmap
     });
 
     const link = await preloader(
@@ -57,7 +70,7 @@ const assets = async (url: URL, dir: string) => {
   });
 };
 
-const html = (url: URL, importmap: Importmap, link: string) => {
+const html = (url: URL, importmap: Deno.ImportMap, link: string) => {
   const stream = render({ url, importmap });
 
   return new Response(
@@ -66,29 +79,33 @@ const html = (url: URL, importmap: Importmap, link: string) => {
       headers: {
         "content-type": "text/html; charset=utf-8",
         link,
-        "cache-control": 'public, max-age=0, must-revalidate',
+        "cache-control": "public, max-age=0, must-revalidate",
         "x-powered-by": `Micro v${version}`,
       },
     },
   );
 };
 
-const server = (
+const server = async (
   {
-    importmap,
+    tsconfig = './tsconfig.ts',
+    importmap = "./importmap.json",
     dir = "src",
     root = "http://localhost:3000",
   }: Options,
 ) => {
-  const link = microloader({ importmap });
+  const importmapJson = await readImportmap(importmap);
+  const tsconfigJson = await readTSConfig(tsconfig);
+
+  const link = microloader({ importmap: importmapJson });
 
   const handler = (request: Request) => {
     const url = new URL(request.url);
 
     if (url.pathname.startsWith(assetsPath)) {
-      return assets(url, dir);
+      return withLogger(assets)(url, dir, tsconfigJson, importmapJson);
     } else {
-      return html(url, importmap, link);
+      return withLogger(html)(url, importmapJson, link);
     }
   };
 

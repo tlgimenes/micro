@@ -1,4 +1,4 @@
-import React, { ComponentType, lazy } from "react";
+import { ComponentType, lazy } from "react";
 import { Route, RouteComponentProps, Switch } from "wouter";
 
 const importPage = (page: string) => ({

@@ -2,21 +2,15 @@ import React from "react";
 import { renderToPipeableStream } from "react-dom/server";
 
 import { PassThrough } from "./deps.ts";
-import type { Importmap } from "./importmap.ts";
 
 import Html from "./Html.server.tsx";
 
 export interface Options {
   url: URL;
-  importmap: Importmap;
+  importmap: Deno.ImportMap;
 }
 
-const render = (
-  {
-    url,
-    importmap,
-  }: Options,
-) => {
+const render = ({ url, importmap }: Options) => {
   const passthrough = new PassThrough();
   const stream = new ReadableStream({
     start(controller) {
@@ -33,12 +27,13 @@ const render = (
     {
       onError: console.error,
       onErrorShell: console.error,
-      onCompleteShell: () => shell = performance.now(),
+      onCompleteShell: () => (shell = performance.now()),
       onCompleteAll: () => {
+        const onCompleteShell = (shell - start).toFixed(0);
+        const onCompleteAll = (performance.now() - start).toFixed(0);
+        
         console.log(
-          `[200] ${(shell - start).toFixed(0)}ms | ${
-            (performance.now() - start).toFixed(0)
-          }ms: ${url.pathname}`,
+          `onCompleteShell: ${onCompleteShell}ms | onCompleteAll: ${onCompleteAll}ms`,
         );
       },
     },

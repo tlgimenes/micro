@@ -1,9 +1,8 @@
-import React from "react";
 import { SWRConfig } from "swr";
 import { Router } from "wouter";
 
-import { Head, Main } from "./pages/index.tsx";
 import Shell from "./components/Shell.tsx";
+import { Head, Main } from "./pages/index.tsx";
 
 function App() {
   return (

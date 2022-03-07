@@ -3,5 +3,7 @@
     "allowJs": false,
     "checkJs": false,
     "strict": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
   }
 }

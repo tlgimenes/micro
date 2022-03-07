@@ -1,5 +1,3 @@
-import React from "react";
-
 export function Head() {
   return (
     <>
@@ -12,7 +10,7 @@ export function Head() {
 export function Main() {
   return (
     <>
-      <div>Hello World</div>
+      <div>Hello Wolrd!</div>
     </>
   );
 }

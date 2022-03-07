@@ -1,3 +1,4 @@
-export const version = '0.0.1'
+export const version = "0.0.1";
 
-export const assets = `/assets/${crypto.randomUUID()}`
+export const scripts = `/__micro/assets/${crypto.randomUUID()}`;
+

@@ -1,4 +1,3 @@
-import React from "react";
 import { SWRConfig } from "swr";
 import { Router } from "wouter";
 import staticLocationHook from "wouter/static-location";

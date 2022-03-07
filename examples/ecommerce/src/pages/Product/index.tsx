@@ -1,5 +1,3 @@
-import React from "react";
-
 import { useProduct } from "../../hooks/useProduct.ts";
 
 interface Props {

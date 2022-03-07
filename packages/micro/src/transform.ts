@@ -1,19 +1,31 @@
-import { esbuild } from "./deps.ts";
+import { Babel } from "./deps.ts";
 import { isDev } from "./env.ts";
-import { TransformOptions as EsBuildTransformOptions } from "https://deno.land/x/esbuild@v0.12.24/mod.js";
+
+import type { TSConfig } from "./tsconfig.ts";
 
 export interface TransformOptions {
-  source: string;
-  loader?: EsBuildTransformOptions["loader"];
-};
+  filepath: string;
+  tsconfig: TSConfig;
+  importmap: Deno.ImportMap;
+}
 
 const transform = async (
-  { source, loader = "tsx" }: TransformOptions,
+  { filepath, tsconfig }: TransformOptions,
 ) => {
-  const { code } = await esbuild.transform(source, {
-    loader,
-    target: ["esnext"],
-    minify: !isDev,
+  const source = await Deno.readTextFile(filepath);
+  const { code } = Babel.transform(source, {
+    presets: [
+      ["react", {
+        runtime: "automatic",
+        development: isDev,
+        importSource: tsconfig.compilerOptions.jsxImportSource,
+      }],
+      "typescript",
+    ],
+    babelrc: false,
+    envName: isDev ? "development" : "production",
+    filename: filepath,
+    minified: !isDev,
   });
 
   return code;

@@ -1,6 +1,8 @@
 {
   "imports": {
     "react": "https://esm.sh/react@18.0.0-rc.1-next-17806594c-20220301?pin=v66",
+    "react/jsx-runtime": "https://esm.sh/react@18.0.0-rc.1-next-17806594c-20220301?pin=v66&path=/jsx-runtime",
+    "react/jsx-dev-runtime": "https://esm.sh/react@18.0.0-rc.1-next-17806594c-20220301?pin=v66&path=/jsx-dev-runtime",
     "react-dom/client": "https://esm.sh/react-dom@18.0.0-rc.1-next-17806594c-20220301/client?pin=v66",
     "react-dom/server": "https://esm.sh/react-dom@18.0.0-rc.1-next-17806594c-20220301/server.node?pin=v66",
     "wouter": "https://esm.sh/wouter?deps=react@18.0.0-rc.1-next-17806594c-20220301&bundle&pin=v66",
