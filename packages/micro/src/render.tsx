@@ -8,6 +8,13 @@ export interface Options {
   importmap: Deno.ImportMap;
 }
 
+/**
+ * @description
+ * Awaits for shell rendering (sync part) and streams all suspended Suspense boundaries.
+ * If an error happens on the shell, 500 is returned. Else, the same component renders on the client.
+ *
+ * To know more: https://github.com/reactwg/react-18/discussions/122
+ */
 const render = async ({ url, importmap }: Options) => {
   try {
     const stream: ReadableStream = await (ReactDOM as any)
@@ -17,8 +24,6 @@ const render = async ({ url, importmap }: Options) => {
 
     return { stream, status: 200 };
   } catch (err) {
-    console.error(url.pathname, err);
-
     return {
       stream: isDev ? err.stack : `Internal Server Error`,
       status: 500,

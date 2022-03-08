@@ -1,6 +1,6 @@
-import { scripts as assetsPath, version } from "./constants.ts";
-import { createCache, extname, serve } from "./deps.ts";
-import { isDev, port } from "./env.ts";
+import { headers, scripts as assetsPath } from "./constants.ts";
+import { colors, createCache, extname, serve } from "./deps.ts";
+import { isDev } from "./env.ts";
 import { readImportmap } from "./importmap.ts";
 import preloader, { microloader } from "./preloader.ts";
 import render from "./render.tsx";
@@ -13,24 +13,47 @@ interface Options {
   /** @default './tsconfig.json' */
   tsconfig?: string;
   dir?: string;
-  root?: string;
+  host?: string;
 }
 
 const cache = createCache();
 
 const allowedExtensions = new Set([".ts", ".tsx"]);
 
-const withLogger = (cb: (url: URL, ...args: any) => Promise<Response> | Response) => async (url: URL, ...args: any) => {
-  const start = performance.now()
-  const response = await cb(url, ...args)
-  const duration = (performance.now() - start).toFixed(0)
-  
-  console.info(`[${response.status}] ${duration}ms ${url.pathname}`)
+const withLogger = (
+  cb: (url: URL, ...args: any) => Promise<Response> | Response,
+) =>
+  async (url: URL, ...args: any) => {
+    const start = performance.now();
+    const response = await cb(url, ...args);
+    const duration = performance.now() - start;
+    const status = response.status;
 
-  return response
-}
+    const statusText = status < 300
+      ? colors.green(status.toString())
+      : colors.red(status.toString());
 
-const assets = async (url: URL, dir: string, tsconfig: TSConfig, importmap: Deno.ImportMap) => {  
+    const durationText = duration < 150
+      ? colors.cyan(`${duration.toFixed(0)}ms`)
+      : duration < 300
+      ? colors.yellow(`${duration.toFixed(0)}ms`)
+      : colors.red(`${duration.toFixed(0)}ms`);
+
+    const pathname = colors.white(url.pathname);
+
+    console.info(
+      `[${statusText}] ${durationText} ${pathname}`,
+    );
+
+    return response;
+  };
+
+const assets = async (
+  url: URL,
+  dir: string,
+  tsconfig: TSConfig,
+  importmap: Deno.ImportMap,
+) => {
   const path = url.pathname.replace(assetsPath, "");
   const ext = extname(path);
 
@@ -42,7 +65,7 @@ const assets = async (url: URL, dir: string, tsconfig: TSConfig, importmap: Deno
     const transpiled = await transform({
       filepath: `${dir}${path}`,
       tsconfig,
-      importmap
+      importmap,
     });
 
     const link = await preloader(
@@ -58,7 +81,7 @@ const assets = async (url: URL, dir: string, tsconfig: TSConfig, importmap: Deno
         "cache-control": isDev
           ? "no-cache, no-store"
           : "public, max-age=31536000, immutable",
-        "x-powered-by": `Micro v${version}`,
+        ...headers
       },
     });
   } catch (err) {
@@ -81,7 +104,7 @@ const html = async (url: URL, importmap: Deno.ImportMap, link: string) => {
         "content-type": "text/html; charset=utf-8",
         link,
         "cache-control": "public, max-age=0, must-revalidate",
-        "x-powered-by": `Micro v${version}`,
+        ...headers
       },
     },
   );
@@ -89,10 +112,10 @@ const html = async (url: URL, importmap: Deno.ImportMap, link: string) => {
 
 const server = async (
   {
-    tsconfig = './tsconfig.ts',
+    tsconfig = "./tsconfig.ts",
     importmap = "./importmap.json",
     dir = "src",
-    root = "http://localhost:3000",
+    host = "http://localhost:3000",
   }: Options,
 ) => {
   const importmapJson = await readImportmap(importmap);
@@ -110,8 +133,9 @@ const server = async (
     }
   };
 
-  console.log(`Micro running ${root}`);
-  return serve(handler, { port: Number(port) });
+  const { hostname, port } = new URL(host)
+  console.log(`Micro running ${colors.cyan(host)}`);
+  return serve(handler, { port: Number(port), hostname });
 };
 
 export default server;
