@@ -113,9 +113,14 @@ const server = async (
     host = "http://localhost:3000",
   }: Options,
 ) => {
-  const importmapJson = await readImportmap(importmap);
-  const tsconfigJson = await readTSConfig(tsconfig);
-  
+  const [
+    importmapJson,
+    tsconfigJson,
+  ] = await Promise.all([
+    readImportmap(importmap),
+    readTSConfig(tsconfig),
+  ]);
+
   const transform = getTransformer({
     importmap: importmapJson,
     tsconfig: tsconfigJson,
