@@ -1,6 +1,6 @@
 import App from "App";
 
-import { scripts } from "./constants.ts";
+import { assets } from "./constants.ts";
 
 type HtmlProps = {
   importmap: Deno.ImportMap;
@@ -11,14 +11,14 @@ export interface AppServerProps {
   url: URL
 }
 
-const script = () => `
-import { createElement } from "react"
-import { hydrateRoot } from "react-dom/client"
+const script = (importmap: Deno.ImportMap) => `
+import { createElement } from "${importmap.imports['react']}"
+import { hydrateRoot } from "${importmap.imports['react-dom/client']}"
 
 const nextTick = (cb) => new Promise(resolve => setTimeout(() => resolve(cb()), 0));
 
 const hydrate = async () => {
-  const { default: App } = await nextTick(async () => await import("${scripts}/App.client.tsx"));
+  const { default: App } = await nextTick(async () => await import("${assets}/App.client.tsx"));
 
   nextTick(() => {
     hydrateRoot(
@@ -39,12 +39,8 @@ function Html(props: HtmlProps) {
       <App {...props} />
 
       <script
-        type="importmap"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(props.importmap, null, 2) }}
-      />
-      <script
         type="module"
-        dangerouslySetInnerHTML={{ __html: script() }}
+        dangerouslySetInnerHTML={{ __html: script(props.importmap) }}
       />
     </html>
   );

@@ -1,19 +1,17 @@
-import { Babel } from "./deps.ts";
+import { Babel, BabelPluginImportMap } from "./deps.ts";
 import { isDev } from "./env.ts";
 
 import type { TSConfig } from "./tsconfig.ts";
 
 export interface TransformOptions {
-  filepath: string;
   tsconfig: TSConfig;
   importmap: Deno.ImportMap;
 }
 
-const transform = async (
-  { filepath, tsconfig }: TransformOptions,
-) => {
-  const source = await Deno.readTextFile(filepath);
-  const { code } = Babel.transform(source, {
+const getTransformer = ({ tsconfig, importmap }: TransformOptions) => {
+  BabelPluginImportMap.load([importmap]);
+
+  const babelConfig = {
     presets: [
       ["react", {
         runtime: "automatic",
@@ -22,13 +20,24 @@ const transform = async (
       }],
       "typescript",
     ],
+    plugins: [
+      BabelPluginImportMap.plugin(),
+    ],
     babelrc: false,
     envName: isDev ? "development" : "production",
-    filename: filepath,
-    minified: !isDev,
-  });
 
-  return code;
+    minified: !isDev,
+  };
+
+  return async (filepath: string) => {
+    const source = await Deno.readTextFile(filepath);
+    const { code } = Babel.transform(source, {
+      ...babelConfig,
+      filename: filepath,
+    });
+
+    return code;
+  };
 };
 
-export default transform;
+export default getTransformer;
