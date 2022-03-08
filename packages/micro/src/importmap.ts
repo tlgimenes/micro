@@ -1,14 +1,14 @@
 const defaultJson = {
   imports: {
-    "react": "https://esm.sh/react@18.0.0-rc.1-next-17806594c-20220301?pin=v66",
+    "react": "https://esm.sh/react@18.0.0-rc.1-next-a59f53a60-20220308?pin=v67",
     "react/jsx-runtime":
-      "https://esm.sh/react@18.0.0-rc.1-next-17806594c-20220301?pin=v66&path=/jsx-runtime",
+      "https://esm.sh/react@18.0.0-rc.1-next-a59f53a60-20220308?pin=v67&path=/jsx-runtime",
     "react/jsx-dev-runtime":
-      "https://esm.sh/react@18.0.0-rc.1-next-17806594c-20220301?pin=v66&path=/jsx-dev-runtime",
+      "https://esm.sh/react@18.0.0-rc.1-next-a59f53a60-20220308?pin=v67&path=/jsx-dev-runtime",
     "react-dom/client":
-      "https://esm.sh/react-dom@18.0.0-rc.1-next-17806594c-20220301/client?pin=v66",
+      "https://esm.sh/react-dom@18.0.0-rc.1-next-a59f53a60-20220308?pin=v67&deps=react@18.0.0-rc.1-next-a59f53a60-20220308&path=/client",
     "react-dom/server":
-      "https://esm.sh/react-dom@18.0.0-rc.1-next-17806594c-20220301/server.node?pin=v66",
+      "https://esm.sh/react-dom@18.0.0-rc.1-next-a59f53a60-20220308?pin=v67&deps=react@18.0.0-rc.1-next-a59f53a60-20220308&path=/server",
   },
 };
 

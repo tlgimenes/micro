@@ -1,5 +1,4 @@
 import App from "App";
-import React from "react";
 
 import { scripts } from "./constants.ts";
 

@@ -70,12 +70,13 @@ const assets = async (url: URL, dir: string, tsconfig: TSConfig, importmap: Deno
   });
 };
 
-const html = (url: URL, importmap: Deno.ImportMap, link: string) => {
-  const stream = render({ url, importmap });
+const html = async (url: URL, importmap: Deno.ImportMap, link: string) => {
+  const { stream, status } = await render({ url, importmap });
 
   return new Response(
     stream,
     {
+      status,
       headers: {
         "content-type": "text/html; charset=utf-8",
         link,

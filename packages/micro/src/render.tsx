@@ -1,8 +1,6 @@
-import React from "react";
-import { renderToPipeableStream } from "react-dom/server";
+import ReactDOM from "react-dom/server";
 
-import { PassThrough } from "./deps.ts";
-
+import { isDev } from "./env.ts";
 import Html from "./Html.server.tsx";
 
 export interface Options {
@@ -10,38 +8,22 @@ export interface Options {
   importmap: Deno.ImportMap;
 }
 
-const render = ({ url, importmap }: Options) => {
-  const passthrough = new PassThrough();
-  const stream = new ReadableStream({
-    start(controller) {
-      passthrough.on("data", (chunk) => controller.enqueue(chunk));
-      passthrough.on("close", () => controller.close());
-    },
-  });
+const render = async ({ url, importmap }: Options) => {
+  try {
+    const stream: ReadableStream = await (ReactDOM as any)
+      .renderToReadableStream(
+        <Html importmap={importmap} url={url} />,
+      );
 
-  const start = performance.now();
-  let shell = start;
+    return { stream, status: 200 };
+  } catch (err) {
+    console.error(url.pathname, err);
 
-  const { pipe } = renderToPipeableStream(
-    <Html importmap={importmap} url={url} />,
-    {
-      onError: console.error,
-      onErrorShell: console.error,
-      onCompleteShell: () => (shell = performance.now()),
-      onCompleteAll: () => {
-        const onCompleteShell = (shell - start).toFixed(0);
-        const onCompleteAll = (performance.now() - start).toFixed(0);
-        
-        console.log(
-          `onCompleteShell: ${onCompleteShell}ms | onCompleteAll: ${onCompleteAll}ms`,
-        );
-      },
-    },
-  );
-
-  pipe(passthrough);
-
-  return stream;
+    return {
+      stream: isDev ? err.stack : `Internal Server Error`,
+      status: 500,
+    };
+  }
 };
 
 export default render;
