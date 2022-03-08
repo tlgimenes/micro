@@ -12,7 +12,7 @@ interface Options {
   importmap?: string;
   /** @default './tsconfig.json' */
   tsconfig?: string;
-  dir?: string;
+  root?: string;
   host?: string;
 }
 
@@ -114,7 +114,7 @@ const server = async (
   {
     tsconfig = "./tsconfig.ts",
     importmap = "./importmap.json",
-    dir = "src",
+    root = "src",
     host = "http://localhost:3000",
   }: Options,
 ) => {
@@ -127,7 +127,7 @@ const server = async (
     const url = new URL(request.url);
 
     if (url.pathname.startsWith(assetsPath)) {
-      return withLogger(assets)(url, dir, tsconfigJson, importmapJson);
+      return withLogger(assets)(url, root, tsconfigJson, importmapJson);
     } else {
       return withLogger(html)(url, importmapJson, link);
     }
