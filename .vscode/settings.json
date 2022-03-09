@@ -2,10 +2,7 @@
   "deno.enable": true,
   "deno.lint": true,
   "deno.unstable": true,
-  "deno.importMap": "./examples/ecommerce/importmap.json",
-  "editor.defaultFormatter": "denoland.vscode-deno",
   "deno.config": "./tsconfig.json",
-  "[javascript]": {
-    "editor.defaultFormatter": "HookyQR.beautify"
-  }
+  "deno.importMap": "./importmap.json",
+  "editor.defaultFormatter": "denoland.vscode-deno"
 }
