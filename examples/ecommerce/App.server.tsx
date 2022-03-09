@@ -2,10 +2,10 @@ import { SWRConfig } from "swr";
 import { Router } from "wouter";
 import staticLocationHook from "wouter/static-location";
 
-import { Head, Main } from "./pages/index.tsx";
-import Shell from "./components/Shell.tsx";
+import { Head, Main } from "./src/pages/index.tsx";
+import Shell from "./src/components/Shell.tsx";
 
-import type { AppServerProps } from "../../../packages/micro/mod.ts";
+import type { AppServerProps } from "../../packages/micro/mod.ts";
 
 function App({ url }: AppServerProps) {
   return (
@@ -13,7 +13,7 @@ function App({ url }: AppServerProps) {
       <SWRConfig value={{ suspense: true, provider: () => new Map() }}>
         <Shell
           head={<Head />}
-          main={<Main />}
+          main={<Main />}          
         />
       </SWRConfig>
     </Router>

@@ -25,6 +25,20 @@ export const getAssets = ({
   const transform = getTransform({ tsconfig, importmap });
   const assetsRoot = join(root, ".micro");
 
+  const compile = async (path: string) => {
+    const { code, metadata } = await transform(path);
+
+    const outPath = join(assetsRoot, path.replace(root, ""));
+    const outPathMeta = `${outPath}.meta`;
+
+    await Promise.all([
+      ensureFile(outPath).then(() => Deno.writeTextFile(outPath, code)),
+      ensureFile(outPathMeta).then(() =>
+        Deno.writeTextFile(outPathMeta, JSON.stringify(metadata))
+      ),
+    ]);
+  };
+
   const pack = async () => {
     const paths = [];
 
@@ -43,26 +57,13 @@ export const getAssets = ({
 
     // Transform each path generating a JS file + metadata file
     await Promise.all(
-      paths.map(async (path) => {
-        const { code, metadata } = await transform(path);
-
-        const outPath = join(assetsRoot, path.replace(root, ""));
-        const outPathMeta = `${outPath}.meta`;
-
-        await Promise.all([
-          ensureFile(outPath).then(() => Deno.writeTextFile(outPath, code)),
-          ensureFile(outPathMeta).then(() =>
-            Deno.writeTextFile(outPathMeta, JSON.stringify(metadata))
-          ),
-        ]);
-      }),
+      paths.map(compile),
     );
   };
 
   const fetchAsset = async (path: string) => {
     try {
       const filepath = join(assetsRoot, path);
-      
 
       const file = await Deno.open(filepath);
       const stream = readableStreamFromReader(file);
@@ -84,11 +85,30 @@ export const getAssets = ({
     );
   };
 
-  const importAsset = async (path: string) => {
-    const filepath = join(assetsRoot, path);
-    const { default: mod } = await import(filepath);
+  const importAsset = (path: string) => import(join(assetsRoot, path))
 
-    return mod;
+  const watch = async () => {
+    const watcher = Deno.watchFs(root);
+    for await (const event of watcher) {
+      switch (event.kind) {
+        case "create":
+        case "modify":
+          await Promise.all(
+            event.paths
+              .filter((path) => supportedExtensions.has(extname(path)))
+              .filter((path) => !path.includes(".micro"))
+              .map(compile),
+          );
+
+          break;
+        case "remove":
+          await Promise.all([
+            event.paths.map(
+              (path) => Deno.remove(join(assetsRoot, path.replace(root, ""))),
+            ),
+          ]);
+      }
+    }
   };
 
   return {
@@ -96,6 +116,7 @@ export const getAssets = ({
     tsconfig,
     transform,
     pack,
+    watch,
     meta: metadata,
     fetch: fetchAsset,
     import: importAsset,

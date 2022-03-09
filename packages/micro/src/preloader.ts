@@ -1,4 +1,3 @@
-import { assets } from "./constants.ts";
 import { join, dirname } from "./deps.ts";
 
 const isRemoteImport = (path: string) => /http(s)?:\/\//g.test(path);
@@ -11,7 +10,7 @@ export const link = (dependencies: string[], filepath: string) =>
       (dependency) => {
         return isRemoteImport(dependency)
           ? dependency.replace("/deno/", "/es2021/") // esm.sh fix for deno
-          : join(assets, dirname(filepath), dependency) // local import)
+          : join(dirname(filepath), dependency) // local import)
       }
     )
     .map(preload)

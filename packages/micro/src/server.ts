@@ -1,6 +1,6 @@
 import { Assets, getAssets } from "./assets.ts";
 import { assets as assetsPath, headers } from "./constants.ts";
-import { colors, createCache, resolve, serve } from "./deps.ts";
+import { colors, join, resolve, serve } from "./deps.ts";
 import { isDev } from "./env.ts";
 import { readImportmap } from "./importmap.ts";
 import { link as linkHeader } from "./preloader.ts";
@@ -27,7 +27,7 @@ const assetsHandler = async (url: URL, assets: Assets) => {
     assets.meta(filepath),
   ]);
 
-  const link = linkHeader(dependencies, filepath);
+  const link = linkHeader(dependencies, url.pathname);
 
   return new Response(stream, {
     status,
@@ -56,7 +56,7 @@ const htmlHandler = async (
     assets.meta(entrypoint),
   ]);
 
-  const link = linkHeader(dependencies, entrypoint);
+  const link = linkHeader(dependencies, join(assetsPath, entrypoint));
 
   return new Response(stream, {
     status,
@@ -89,6 +89,10 @@ const server = async ({
   });
 
   await assets.pack();
+
+  if (isDev) {
+    assets.watch()
+  }
 
   const handler = async (request: Request) => {
     const start = performance.now();

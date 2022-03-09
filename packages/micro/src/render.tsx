@@ -18,7 +18,7 @@ export interface Options {
  */
 const render = async ({ url, assets }: Options) => {
   try {
-    const App = await assets.import(`App.server.tsx`)
+    const { default: App } = await assets.import(`App.server.tsx`)
 
     const stream: ReadableStream = await (ReactDOM as any)
       .renderToReadableStream(
