@@ -1,11 +1,4 @@
-import {
-  emptyDir,
-  ensureFile,
-  extname,
-  join,
-  readableStreamFromReader,
-  walk,
-} from "./deps.ts";
+import { fs, path, readableStreamFromReader } from "./deps.ts";
 import { getTransform, Metadata } from "./transform/index.ts";
 import { TSConfig } from "./tsconfig.ts";
 
@@ -23,17 +16,17 @@ export const getAssets = ({
   root: string;
 }) => {
   const transform = getTransform({ tsconfig, importmap });
-  const assetsRoot = join(root, ".micro");
+  const assetsRoot = path.join(root, ".micro");
 
-  const compile = async (path: string) => {
-    const { code, metadata } = await transform(path);
+  const compile = async (filepath: string) => {
+    const { code, metadata } = await transform(filepath);
 
-    const outPath = join(assetsRoot, path.replace(root, ""));
+    const outPath = path.join(assetsRoot, filepath.replace(root, ""));
     const outPathMeta = `${outPath}.meta`;
 
     await Promise.all([
-      ensureFile(outPath).then(() => Deno.writeTextFile(outPath, code)),
-      ensureFile(outPathMeta).then(() =>
+      fs.ensureFile(outPath).then(() => Deno.writeTextFile(outPath, code)),
+      fs.ensureFile(outPathMeta).then(() =>
         Deno.writeTextFile(outPathMeta, JSON.stringify(metadata))
       ),
     ]);
@@ -42,12 +35,12 @@ export const getAssets = ({
   const pack = async () => {
     const paths = [];
 
-    await emptyDir(assetsRoot);
+    await fs.emptyDir(assetsRoot);
 
     // Gathers all paths
-    for await (const entry of walk(root)) {
+    for await (const entry of fs.walk(root)) {
       if (entry.isFile) {
-        const ext = extname(entry.path);
+        const ext = path.extname(entry.path);
 
         if (supportedExtensions.has(ext)) {
           paths.push(entry.path);
@@ -61,12 +54,12 @@ export const getAssets = ({
     );
   };
 
-  const fetchAsset = async (path: string) => {
+  const fetchAsset = async (file: string) => {
     try {
-      const filepath = join(assetsRoot, path);
+      const filepath = path.join(assetsRoot, file);
 
-      const file = await Deno.open(filepath);
-      const stream = readableStreamFromReader(file);
+      const fd = await Deno.open(filepath);
+      const stream = readableStreamFromReader(fd);
 
       return { stream, status: 200 };
     } catch (err) {
@@ -76,8 +69,8 @@ export const getAssets = ({
     }
   };
 
-  const metadata = (path: string): Promise<Metadata> => {
-    const filepath = join(assetsRoot, path);
+  const metadata = (file: string): Promise<Metadata> => {
+    const filepath = path.join(assetsRoot, file);
     const metapath = `${filepath}.meta`;
 
     return Deno.readTextFile(metapath).then(
@@ -85,7 +78,7 @@ export const getAssets = ({
     );
   };
 
-  const importAsset = (path: string) => import(join(assetsRoot, path));
+  const importAsset = (file: string) => import(path.join(assetsRoot, file));
 
   const watch = async () => {
     const watcher = Deno.watchFs(root);
@@ -95,8 +88,8 @@ export const getAssets = ({
         case "modify":
           await Promise.all(
             event.paths
-              .filter((path) => supportedExtensions.has(extname(path)))
-              .filter((path) => !path.includes(".micro"))
+              .filter((p) => supportedExtensions.has(path.extname(p)))
+              .filter((p) => !p.includes(".micro"))
               .map(compile),
           );
 
@@ -104,10 +97,10 @@ export const getAssets = ({
         case "remove":
           await Promise.all(
             event.paths
-              .filter((path) => supportedExtensions.has(extname(path)))
-              .filter((path) => !path.includes(".micro"))
+              .filter((p) => supportedExtensions.has(path.extname(p)))
+              .filter((p) => !p.includes(".micro"))
               .map(
-                (path) => Deno.remove(join(assetsRoot, path.replace(root, ""))),
+                (p) => Deno.remove(path.join(assetsRoot, p.replace(root, ""))),
               ),
           );
       }

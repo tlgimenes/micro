@@ -26,9 +26,6 @@ export const getTransform = (
     ],
     babelrc: false,
     envName: isDev ? "development" : "production",
-
-    ast: true,
-
     minified: !isDev,
   };
 
@@ -39,6 +36,8 @@ export const getTransform = (
       filename: filepath,
     });
 
-    return { code: code ?? '', metadata }
+    const withComments = `// @ts-nocheck\n${code}`
+
+    return { code: withComments, metadata }
   };
 };

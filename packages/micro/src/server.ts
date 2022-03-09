@@ -2,10 +2,9 @@ import { Assets, getAssets } from "./assets.ts";
 import { assets as assetsPath, headers } from "./constants.ts";
 import {
   colors,
-  join,
   mime,
   readableStreamFromReader,
-  resolve,
+  path,
   serve,
 } from "./deps.ts";
 import { isDev } from "./env.ts";
@@ -25,7 +24,7 @@ interface Options {
 
 const publicHandler = async (url: URL, root: string) => {
   try {
-    const fd = await Deno.open(join(root, 'public', url.pathname));
+    const fd = await Deno.open(path.join(root, 'public', url.pathname));
     const stream = readableStreamFromReader(fd);
     const contentType = mime.lookup(url.pathname);
 
@@ -87,7 +86,7 @@ const htmlHandler = async (
     assets.meta(entrypoint),
   ]);
 
-  const link = linkHeader(dependencies, join(assetsPath, entrypoint));
+  const link = linkHeader(dependencies, path.join(assetsPath, entrypoint));
 
   return new Response(stream, {
     status,
@@ -106,7 +105,7 @@ const server = async ({
   root = "./src",
   host = "http://localhost:3000",
 }: Options) => {
-  const absoluteRoot = resolve(root);
+  const absoluteRoot = path.resolve(root);
 
   const [importmapJson, tsconfigJson] = await Promise.all([
     readImportmap(importmap),

@@ -1,14 +1,5 @@
-export {
-  dirname,
-  extname,
-  join,
-  resolve,
-} from "https://deno.land/std@0.128.0/path/mod.ts";
-export {
-  emptyDir,
-  ensureFile,
-  walk,
-} from "https://deno.land/std@0.128.0/fs/mod.ts";
+export * as path from "https://deno.land/std@0.128.0/path/mod.ts";
+export * as fs from "https://deno.land/std@0.128.0/fs/mod.ts";
 export { readableStreamFromReader } from "https://deno.land/std@0.128.0/streams/mod.ts";
 export { serve } from "https://deno.land/std@0.128.0/http/server.ts";
 export * as colors from "https://deno.land/std@0.128.0/fmt/colors.ts";

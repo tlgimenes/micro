@@ -1,12 +1,13 @@
 import ReactDOM from "react-dom/server";
 
 import { Assets } from "./assets.ts";
+import { colors } from "./deps.ts";
 import { isDev } from "./env.ts";
 import Html from "./Html.server.tsx";
 
 export interface Options {
   url: URL;
-  assets: Assets
+  assets: Assets;
 }
 
 /**
@@ -18,7 +19,7 @@ export interface Options {
  */
 const render = async ({ url, assets }: Options) => {
   try {
-    const { default: App } = await assets.import(`App.server.tsx`)
+    const { default: App } = await assets.import(`App.server.tsx`);
 
     const stream: ReadableStream = await (ReactDOM as any)
       .renderToReadableStream(
@@ -27,6 +28,10 @@ const render = async ({ url, assets }: Options) => {
 
     return { stream, status: 200 };
   } catch (err) {
+    console.error(Deno.inspect(err, {
+      colors: colors.getColorEnabled(),
+    }));
+
     return {
       stream: isDev ? err.stack : `Internal Server Error`,
       status: 500,

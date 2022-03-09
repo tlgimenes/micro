@@ -1,11 +1,11 @@
 example=examples/ecommerce
-c_flags=--allow-all --import-map importmap.json --config tsconfig.json
+c_flags=--import-map importmap.json --config tsconfig.json --unstable
 
 dev:
-	mode=dev deno run ${c_flags} --no-check --unstable --watch ${example}/server.ts
+	mode=dev deno run --allow-all ${c_flags} --no-check --watch ${example}/server.ts
 
 start:
-	mode=prod deno run ${c_flags} --unstable ${example}/server.ts
+	mode=prod deno run --allow-all ${c_flags} --no-check=remote ${example}/server.ts
 
 cache:
-	deno cache --import-map=importmap.json --reload --no-check ${example}/server.ts
+	deno cache ${c_flags} --reload --no-check=remote  ${example}/server.ts
