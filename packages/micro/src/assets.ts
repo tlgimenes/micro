@@ -85,7 +85,7 @@ export const getAssets = ({
     );
   };
 
-  const importAsset = (path: string) => import(join(assetsRoot, path))
+  const importAsset = (path: string) => import(join(assetsRoot, path));
 
   const watch = async () => {
     const watcher = Deno.watchFs(root);
@@ -102,11 +102,14 @@ export const getAssets = ({
 
           break;
         case "remove":
-          await Promise.all([
-            event.paths.map(
-              (path) => Deno.remove(join(assetsRoot, path.replace(root, ""))),
-            ),
-          ]);
+          await Promise.all(
+            event.paths
+              .filter((path) => supportedExtensions.has(extname(path)))
+              .filter((path) => !path.includes(".micro"))
+              .map(
+                (path) => Deno.remove(join(assetsRoot, path.replace(root, ""))),
+              ),
+          );
       }
     }
   };

@@ -1,6 +1,13 @@
 import { Assets, getAssets } from "./assets.ts";
 import { assets as assetsPath, headers } from "./constants.ts";
-import { colors, join, resolve, serve } from "./deps.ts";
+import {
+  colors,
+  join,
+  mime,
+  readableStreamFromReader,
+  resolve,
+  serve,
+} from "./deps.ts";
 import { isDev } from "./env.ts";
 import { readImportmap } from "./importmap.ts";
 import { link as linkHeader } from "./preloader.ts";
@@ -15,6 +22,30 @@ interface Options {
   root?: string;
   host?: string;
 }
+
+const publicHandler = async (url: URL, root: string) => {
+  try {
+    const fd = await Deno.open(join(root, 'public', url.pathname));
+    const stream = readableStreamFromReader(fd);
+    const contentType = mime.lookup(url.pathname);
+
+    return new Response(stream, {
+      headers: {
+        "cache-control": "public, max-age=0, must-revalidate",
+        ...contentType && { "content-type": contentType },
+        ...headers,
+      },
+    });
+  } catch (_) {
+    return new Response(null, {
+      status: 404,
+      headers: {
+        "cache-control": "public, max-age=0, must-revalidate",
+        ...headers,
+      },
+    });
+  }
+};
 
 const assetsHandler = async (url: URL, assets: Assets) => {
   const filepath = url.pathname.replace(assetsPath, "");
@@ -46,7 +77,7 @@ const htmlHandler = async (
   url: URL,
   assets: Assets,
 ) => {
-  const entrypoint = 'App.client.tsx'
+  const entrypoint = "App.client.tsx";
 
   const [
     { stream, status },
@@ -91,16 +122,20 @@ const server = async ({
   await assets.pack();
 
   if (isDev) {
-    assets.watch()
+    assets.watch();
   }
 
   const handler = async (request: Request) => {
     const start = performance.now();
 
     const url = new URL(request.url);
+    const contentType = mime.lookup(url.pathname);
+
     const response = url.pathname.startsWith(assetsPath)
       ? await assetsHandler(url, assets)
-      : await htmlHandler(url, assets);
+      : contentType === false || contentType === "text/html"
+      ? await htmlHandler(url, assets)
+      : await publicHandler(url, absoluteRoot);
 
     const duration = performance.now() - start;
     const status = response.status;

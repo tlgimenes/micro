@@ -10,7 +10,7 @@ export const link = (dependencies: string[], filepath: string) =>
       (dependency) => {
         return isRemoteImport(dependency)
           ? dependency.replace("/deno/", "/es2021/") // esm.sh fix for deno
-          : join(dirname(filepath), dependency) // local import)
+          : join(dirname(filepath), dependency) // local import
       }
     )
     .map(preload)
