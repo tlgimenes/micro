@@ -1,11 +1,10 @@
-import { build, serve as serveAssets } from "./assets.ts";
+import { Assets, getAssets } from "./assets.ts";
 import { assets as assetsPath, headers } from "./constants.ts";
 import { colors, createCache, resolve, serve } from "./deps.ts";
 import { isDev } from "./env.ts";
 import { readImportmap } from "./importmap.ts";
-import preloader, { microloader } from "./preloader.ts";
+import { link as linkHeader } from "./preloader.ts";
 import render from "./render.tsx";
-import getTransformer from "./transform.ts";
 import { readTSConfig } from "./tsconfig.ts";
 
 interface Options {
@@ -17,42 +16,24 @@ interface Options {
   host?: string;
 }
 
-const cache = createCache();
+const assetsHandler = async (url: URL, assets: Assets) => {
+  const filepath = url.pathname.replace(assetsPath, "");
 
-const withLogger = (
-  cb: (url: URL, ...args: any) => Promise<Response> | Response,
-) =>
-  async (url: URL, ...args: any) => {
-    const start = performance.now();
-    const response = await cb(url, ...args);
-    const duration = performance.now() - start;
-    const status = response.status;
+  const [
+    { stream, status },
+    { dependencies = [] },
+  ] = await Promise.all([
+    assets.fetch(filepath),
+    assets.meta(filepath),
+  ]);
 
-    const statusText = status < 300
-      ? colors.green(status.toString())
-      : colors.red(status.toString());
-
-    const durationText = duration < 150
-      ? colors.cyan(`${duration.toFixed(0)}ms`)
-      : duration < 300
-      ? colors.yellow(`${duration.toFixed(0)}ms`)
-      : colors.red(`${duration.toFixed(0)}ms`);
-
-    const pathname = colors.white(url.pathname);
-
-    console.info(`[${statusText}] ${durationText} ${pathname}`);
-
-    return response;
-  };
-
-const assets = async (url: URL, root: string) => {
-  const { stream, status } = await serveAssets(root, url);
+  const link = linkHeader(dependencies, filepath);
 
   return new Response(stream, {
     status,
     headers: {
       "content-type": "application/javascript; charset=utf-8",
-      // link,
+      link,
       "cache-control": isDev
         ? "no-cache, no-store"
         : "public, max-age=31536000, immutable",
@@ -61,8 +42,21 @@ const assets = async (url: URL, root: string) => {
   });
 };
 
-const html = async (url: URL, importmap: Deno.ImportMap, link: string, root: string) => {
-  const { stream, status } = await render({ url, importmap, root });
+const htmlHandler = async (
+  url: URL,
+  assets: Assets,
+) => {
+  const entrypoint = 'App.client.tsx'
+
+  const [
+    { stream, status },
+    { dependencies = [] },
+  ] = await Promise.all([
+    render({ url, assets }),
+    assets.meta(entrypoint),
+  ]);
+
+  const link = linkHeader(dependencies, entrypoint);
 
   return new Response(stream, {
     status,
@@ -88,23 +82,40 @@ const server = async ({
     readTSConfig(tsconfig),
   ]);
 
-  const transform = getTransformer({
+  const assets = getAssets({
+    root: absoluteRoot,
     importmap: importmapJson,
     tsconfig: tsconfigJson,
   });
 
-  await build(absoluteRoot, transform);
+  await assets.pack();
 
-  const link = microloader({ importmap: importmapJson });
+  const handler = async (request: Request) => {
+    const start = performance.now();
 
-  const handler = (request: Request) => {
     const url = new URL(request.url);
+    const response = url.pathname.startsWith(assetsPath)
+      ? await assetsHandler(url, assets)
+      : await htmlHandler(url, assets);
 
-    if (url.pathname.startsWith(assetsPath)) {
-      return withLogger(assets)(url, absoluteRoot);
-    } else {
-      return withLogger(html)(url, importmapJson, link, absoluteRoot);
-    }
+    const duration = performance.now() - start;
+    const status = response.status;
+
+    const statusText = status < 300
+      ? colors.green(status.toString())
+      : colors.red(status.toString());
+
+    const durationText = duration < 150
+      ? colors.cyan(`${duration.toFixed(0)}ms`)
+      : duration < 300
+      ? colors.yellow(`${duration.toFixed(0)}ms`)
+      : colors.red(`${duration.toFixed(0)}ms`);
+
+    console.info(
+      `[${statusText}] ${durationText} ${colors.white(url.pathname)}`,
+    );
+
+    return response;
   };
 
   const { hostname, port } = new URL(host);

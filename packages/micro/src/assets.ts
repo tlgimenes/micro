@@ -4,65 +4,100 @@ import {
   extname,
   join,
   readableStreamFromReader,
-  relative,
   walk,
 } from "./deps.ts";
-import { assets as assetsPath } from "./constants.ts";
+import { getTransform, Metadata } from "./transform/index.ts";
+import { TSConfig } from "./tsconfig.ts";
 
-export const supportedExtensions = new Set([".ts", ".tsx"]);
+const supportedExtensions = new Set([".ts", ".tsx"]);
 
-const getAssetsRoot = (root: string) => join(root, ".micro");
+export type Assets = ReturnType<typeof getAssets>;
 
-export const build = async (
-  root: string,
-  transform: (x: string) => Promise<string>,
-) => {
-  const start = performance.now();
+export const getAssets = ({
+  tsconfig,
+  importmap,
+  root,
+}: {
+  tsconfig: TSConfig;
+  importmap: Deno.ImportMap;
+  root: string;
+}) => {
+  const transform = getTransform({ tsconfig, importmap });
+  const assetsRoot = join(root, ".micro");
 
-  const outputRoot = getAssetsRoot(root);
-  const paths = [];
+  const pack = async () => {
+    const paths = [];
 
-  await emptyDir(outputRoot);
+    await emptyDir(assetsRoot);
 
-  for await (const entry of walk(root)) {
-    if (entry.isFile) {
-      const ext = extname(entry.path);
+    // Gathers all paths
+    for await (const entry of walk(root)) {
+      if (entry.isFile) {
+        const ext = extname(entry.path);
 
-      if (supportedExtensions.has(ext)) {
-        paths.push(entry.path);
+        if (supportedExtensions.has(ext)) {
+          paths.push(entry.path);
+        }
       }
     }
-  }
 
-  await Promise.all(paths.map(async (path) => {
-    const src = await transform(path);
-    const outPath = join(outputRoot, relative(root, path));
+    // Transform each path generating a JS file + metadata file
+    await Promise.all(
+      paths.map(async (path) => {
+        const { code, metadata } = await transform(path);
 
-    await ensureFile(outPath);
-    await Deno.writeTextFile(outPath, src);
-  }));
+        const outPath = join(assetsRoot, path.replace(root, ""));
+        const outPathMeta = `${outPath}.meta`;
 
-  const duration = (performance.now() - start).toFixed(0);
-  console.info(`Transpiling ${paths.length} files took ${duration}ms`);
+        await Promise.all([
+          ensureFile(outPath).then(() => Deno.writeTextFile(outPath, code)),
+          ensureFile(outPathMeta).then(() =>
+            Deno.writeTextFile(outPathMeta, JSON.stringify(metadata))
+          ),
+        ]);
+      }),
+    );
+  };
+
+  const fetchAsset = async (path: string) => {
+    try {
+      const filepath = join(assetsRoot, path);
+      
+
+      const file = await Deno.open(filepath);
+      const stream = readableStreamFromReader(file);
+
+      return { stream, status: 200 };
+    } catch (err) {
+      console.error(err);
+
+      return { stream: null, status: 404 };
+    }
+  };
+
+  const metadata = (path: string): Promise<Metadata> => {
+    const filepath = join(assetsRoot, path);
+    const metapath = `${filepath}.meta`;
+
+    return Deno.readTextFile(metapath).then(
+      JSON.parse,
+    );
+  };
+
+  const importAsset = async (path: string) => {
+    const filepath = join(assetsRoot, path);
+    const { default: mod } = await import(filepath);
+
+    return mod;
+  };
+
+  return {
+    importmap,
+    tsconfig,
+    transform,
+    pack,
+    meta: metadata,
+    fetch: fetchAsset,
+    import: importAsset,
+  };
 };
-
-export const serve = async (root: string, url: URL) => {
-  try {
-    const outputRoot = getAssetsRoot(root);
-
-    const path = url.pathname.replace(assetsPath, "");
-    const filepath = join(outputRoot, path);
-
-    const file = await Deno.open(filepath);
-    const stream = readableStreamFromReader(file);
-
-    return { stream, status: 200 };
-  } catch (err) {
-    console.error(err);
-
-    return { stream: null, status: 404 };
-  }
-};
-
-export const importAsset = (root: string, path: string) =>
-  import(join(getAssetsRoot(root), path)).then((mod) => mod.default);
