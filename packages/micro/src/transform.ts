@@ -36,7 +36,7 @@ const getTransformer = ({ tsconfig, importmap }: TransformOptions) => {
       filename: filepath,
     });
 
-    return code;
+    return code || '';
   };
 };
 

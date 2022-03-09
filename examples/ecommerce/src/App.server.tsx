@@ -11,7 +11,10 @@ function App({ url }: AppServerProps) {
   return (
     <Router hook={staticLocationHook(url.pathname)}>
       <SWRConfig value={{ suspense: true, provider: () => new Map() }}>
-        <Shell head={<Head />} main={<Main />} />
+        <Shell
+          head={<Head />}
+          main={<Main />}
+        />
       </SWRConfig>
     </Router>
   );

@@ -8,7 +8,10 @@ function App() {
   return (
     <Router>
       <SWRConfig value={{ suspense: true }}>
-        <Shell head={<Head />} main={<Main />} />
+        <Shell
+          head={<Head />}
+          main={<Main />}
+        />
       </SWRConfig>
     </Router>
   );

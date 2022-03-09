@@ -1,5 +1,6 @@
+import { build, serve as serveAssets } from "./assets.ts";
 import { assets as assetsPath, headers } from "./constants.ts";
-import { colors, createCache, extname, serve } from "./deps.ts";
+import { colors, createCache, resolve, serve } from "./deps.ts";
 import { isDev } from "./env.ts";
 import { readImportmap } from "./importmap.ts";
 import preloader, { microloader } from "./preloader.ts";
@@ -17,8 +18,6 @@ interface Options {
 }
 
 const cache = createCache();
-
-const allowedExtensions = new Set([".ts", ".tsx"]);
 
 const withLogger = (
   cb: (url: URL, ...args: any) => Promise<Response> | Response,
@@ -41,82 +40,50 @@ const withLogger = (
 
     const pathname = colors.white(url.pathname);
 
-    console.info(
-      `[${statusText}] ${durationText} ${pathname}`,
-    );
+    console.info(`[${statusText}] ${durationText} ${pathname}`);
 
     return response;
   };
 
-const assets = async (
-  url: URL,
-  dir: string,
-  transform: (x: string) => Promise<string>,
-) => {
-  const path = url.pathname.replace(assetsPath, "");
-  const ext = extname(path);
+const assets = async (url: URL, root: string) => {
+  const { stream, status } = await serveAssets(root, url);
 
-  if (!allowedExtensions.has(ext)) {
-    throw new Error(`Uknown extension ${ext}. Please use .ts or .tsx`);
-  }
-
-  try {
-    const transpiled = await transform(`${dir}${path}`);
-
-    const link = await preloader(
-      path,
-      cache,
-      `file://${Deno.cwd()}/${dir}`,
-    );
-
-    return new Response(transpiled, {
-      headers: {
-        "content-type": "application/javascript; charset=utf-8",
-        link,
-        "cache-control": isDev
-          ? "no-cache, no-store"
-          : "public, max-age=31536000, immutable",
-        ...headers,
-      },
-    });
-  } catch (err) {
-    console.error(err);
-  }
-
-  return new Response(null, {
-    status: 404,
+  return new Response(stream, {
+    status,
+    headers: {
+      "content-type": "application/javascript; charset=utf-8",
+      // link,
+      "cache-control": isDev
+        ? "no-cache, no-store"
+        : "public, max-age=31536000, immutable",
+      ...headers,
+    },
   });
 };
 
-const html = async (url: URL, importmap: Deno.ImportMap, link: string) => {
-  const { stream, status } = await render({ url, importmap });
+const html = async (url: URL, importmap: Deno.ImportMap, link: string, root: string) => {
+  const { stream, status } = await render({ url, importmap, root });
 
-  return new Response(
-    stream,
-    {
-      status,
-      headers: {
-        "content-type": "text/html; charset=utf-8",
-        link,
-        "cache-control": "public, max-age=0, must-revalidate",
-        ...headers,
-      },
+  return new Response(stream, {
+    status,
+    headers: {
+      "content-type": "text/html; charset=utf-8",
+      link,
+      "cache-control": "public, max-age=0, must-revalidate",
+      ...headers,
     },
-  );
+  });
 };
 
-const server = async (
-  {
-    tsconfig = "./tsconfig.ts",
-    importmap = "./importmap.json",
-    root = "src",
-    host = "http://localhost:3000",
-  }: Options,
-) => {
-  const [
-    importmapJson,
-    tsconfigJson,
-  ] = await Promise.all([
+const server = async ({
+  tsconfig = "./tsconfig.ts",
+  importmap = "./importmap.json",
+  root = "./src",
+  host = "http://localhost:3000",
+}: Options) => {
+  const absoluteRoot = resolve(root);
+
+  const [importmapJson, tsconfigJson] = await Promise.all([
     readImportmap(importmap),
     readTSConfig(tsconfig),
   ]);
@@ -126,15 +93,17 @@ const server = async (
     tsconfig: tsconfigJson,
   });
 
+  await build(absoluteRoot, transform);
+
   const link = microloader({ importmap: importmapJson });
 
   const handler = (request: Request) => {
     const url = new URL(request.url);
 
     if (url.pathname.startsWith(assetsPath)) {
-      return withLogger(assets)(url, root, transform);
+      return withLogger(assets)(url, absoluteRoot);
     } else {
-      return withLogger(html)(url, importmapJson, link);
+      return withLogger(html)(url, importmapJson, link, absoluteRoot);
     }
   };
 

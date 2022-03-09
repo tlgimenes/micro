@@ -1,19 +1,20 @@
-import App from "App";
-
 import { assets } from "./constants.ts";
+
+import type { ComponentType } from "react";
 
 type HtmlProps = {
   importmap: Deno.ImportMap;
   url: URL;
+  App: ComponentType<AppServerProps>;
 };
 
 export interface AppServerProps {
-  url: URL
+  url: URL;
 }
 
 const script = (importmap: Deno.ImportMap) => `
-import { createElement } from "${importmap.imports['react']}"
-import { hydrateRoot } from "${importmap.imports['react-dom/client']}"
+import { createElement } from "${importmap.imports["react"]}"
+import { hydrateRoot } from "${importmap.imports["react-dom/client"]}"
 
 const nextTick = (cb) => new Promise(resolve => setTimeout(() => resolve(cb()), 0));
 
@@ -33,14 +34,14 @@ const hydrate = async () => {
 hydrate();
 `;
 
-function Html(props: HtmlProps) {
+function Html({ importmap, url, App }: HtmlProps) {
   return (
     <html>
-      <App {...props} />
+      <App url={url} />
 
       <script
         type="module"
-        dangerouslySetInnerHTML={{ __html: script(props.importmap) }}
+        dangerouslySetInnerHTML={{ __html: script(importmap) }}
       />
     </html>
   );
