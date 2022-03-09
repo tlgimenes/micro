@@ -2,7 +2,7 @@ import ReactDOM from "react-dom/server";
 
 import { Assets } from "./assets.ts";
 import { colors } from "./deps.ts";
-import { isDev } from "./env.ts";
+import { isDev } from "./constants.ts";
 import Html from "./Html.server.tsx";
 
 export interface Options {

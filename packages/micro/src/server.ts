@@ -1,13 +1,6 @@
 import { Assets, getAssets } from "./assets.ts";
-import { assets as assetsPath, headers } from "./constants.ts";
-import {
-  colors,
-  mime,
-  readableStreamFromReader,
-  path,
-  serve,
-} from "./deps.ts";
-import { isDev } from "./env.ts";
+import { httpAssetsRoot as assetsPath, headers, isDev } from "./constants.ts";
+import { colors, mime, path, readableStreamFromReader, serve } from "./deps.ts";
 import { readImportmap } from "./importmap.ts";
 import { link as linkHeader } from "./preloader.ts";
 import render from "./render.tsx";

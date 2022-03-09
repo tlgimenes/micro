@@ -1,4 +1,4 @@
-import { assets } from "./constants.ts";
+import { httpAssetsRoot } from "./constants.ts";
 
 import type { ComponentType } from "react";
 
@@ -19,7 +19,7 @@ import { hydrateRoot } from "${importmap.imports["react-dom/client"]}"
 const nextTick = (cb) => new Promise(resolve => setTimeout(() => resolve(cb()), 0));
 
 const hydrate = async () => {
-  const { default: App } = await nextTick(async () => await import("${assets}/App.client.tsx"));
+  const { default: App } = await nextTick(async () => await import("${httpAssetsRoot}/App.client.tsx"));
 
   nextTick(() => {
     hydrateRoot(

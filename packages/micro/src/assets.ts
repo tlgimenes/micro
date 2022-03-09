@@ -1,6 +1,7 @@
 import { fs, path, readableStreamFromReader } from "./deps.ts";
 import { getTransform, Metadata } from "./transform/index.ts";
 import { TSConfig } from "./tsconfig.ts";
+import { fsAssetsRoot } from './constants.ts'
 
 const supportedExtensions = new Set([".ts", ".tsx"]);
 
@@ -16,7 +17,7 @@ export const getAssets = ({
   root: string;
 }) => {
   const transform = getTransform({ tsconfig, importmap });
-  const assetsRoot = path.join(root, ".micro");
+  const assetsRoot = path.join(root, fsAssetsRoot);
 
   const compile = async (filepath: string) => {
     const { code, metadata } = await transform(filepath);
@@ -89,7 +90,7 @@ export const getAssets = ({
           await Promise.all(
             event.paths
               .filter((p) => supportedExtensions.has(path.extname(p)))
-              .filter((p) => !p.includes(".micro"))
+              .filter((p) => !p.includes(fsAssetsRoot))
               .map(compile),
           );
 
@@ -98,7 +99,7 @@ export const getAssets = ({
           await Promise.all(
             event.paths
               .filter((p) => supportedExtensions.has(path.extname(p)))
-              .filter((p) => !p.includes(".micro"))
+              .filter((p) => !p.includes(fsAssetsRoot))
               .map(
                 (p) => Deno.remove(path.join(assetsRoot, p.replace(root, ""))),
               ),

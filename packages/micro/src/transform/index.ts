@@ -1,5 +1,5 @@
+import { isDev } from "../constants.ts";
 import { Babel, BabelPluginImportMap } from "../deps.ts";
-import { isDev } from "../env.ts";
 import { TSConfig } from "../tsconfig.ts";
 import { BabelMetadataPlugin } from "./plugins/metadata.ts";
 
