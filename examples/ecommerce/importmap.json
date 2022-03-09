@@ -7,7 +7,6 @@
     "react-dom/server": "https://esm.sh/react-dom@18.0.0-rc.1-next-a59f53a60-20220308?pin=v67&deps=react@18.0.0-rc.1-next-a59f53a60-20220308&path=/server",
     "wouter": "https://esm.sh/wouter?deps=react@18.0.0-rc.1-next-a59f53a60-20220308&bundle&pin=v67",
     "wouter/static-location": "https://esm.sh/wouter/static-location?deps=react@18.0.0-rc.1-next-a59f53a60-20220308&bundle&pin=v67",
-    "styled": "https://esm.sh/@stitches/react@1.2.7",
     "swr": "https://esm.sh/swr@1.2.2?deps=react@18.0.0-rc.1-next-a59f53a60-20220308&bundle&pin=v67"
   }
 }
