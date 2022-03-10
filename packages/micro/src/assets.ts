@@ -1,7 +1,7 @@
-import { fs, path, readableStreamFromReader } from "./deps.ts";
+import { fs, path, readableStreamFromReader } from "./../deps.ts";
 import { getTransform, Metadata } from "./transform/index.ts";
 import { TSConfig } from "./tsconfig.ts";
-import { fsAssetsRoot } from './constants.ts'
+import { cacheBuster, fsAssetsRoot, fsAssetsScope } from './constants.ts'
 
 const supportedExtensions = new Set([".ts", ".tsx"]);
 
@@ -36,7 +36,7 @@ export const getAssets = ({
   const pack = async () => {
     const paths = [];
 
-    await fs.emptyDir(assetsRoot);
+    await fs.emptyDir(path.join(root, fsAssetsScope));
 
     // Gathers all paths
     for await (const entry of fs.walk(root)) {

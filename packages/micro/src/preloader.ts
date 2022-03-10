@@ -1,4 +1,4 @@
-import { path } from "./deps.ts";
+import { path } from "./../deps.ts";
 
 const isRemoteImport = (path: string) => /http(s)?:\/\//g.test(path);
 

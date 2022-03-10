@@ -1,11 +1,15 @@
-example=examples/ecommerce
+example=./examples/ecommerce
+bin=./packages/micro/cli.ts
 c_flags=--import-map=./importmap.json --config=./tsconfig.json --unstable
 
 dev:
-	mode=dev deno run --allow-all ${c_flags} --no-check --watch ${example}/server.ts
+	mode=dev deno run --allow-all ${c_flags} --no-check --watch ${bin} dev --root=${example}
 
-start:
-	mode=prod deno run --allow-all ${c_flags} --no-check=remote ${example}/server.ts
+build:
+	mode=prod deno run --allow-all ${c_flags} --no-check=remote ${bin} build --root=${example}
+
+serve:
+	mode=prod deno run --allow-read --allow-net ${c_flags} --no-check=remote ${bin} serve --root=${example}
 
 cache:
-	deno cache ${c_flags} --reload --no-check=remote  ${example}/server.ts
+	deno cache ${c_flags} --reload --no-check=remote  ${bin} --root=${example}
