@@ -42,13 +42,44 @@ export const dev = async ({
   const watch = async () => {
     const watcher = Deno.watchFs(config.root);
     for await (const event of watcher) {
-      switch (event.kind) {
-        case "create":
-        case "modify":
-          cache.reset();
-          break;
+      if (event.kind === "create" || event.kind === "modify") {
+        /* Reset local cache so SSR works with HMR */
+        cache.reset();
+
+        /* Warns React FastRefresh to upgrade module */
+        sockets.forEach(
+          (socket) =>
+            socket.send(JSON.stringify({
+              type: "refresh",
+              data: {
+                paths: event.paths,
+              },
+            })),
+        );
       }
     }
+  };
+
+  /**
+   * In-memory store of open WebSockets for
+   * triggering browser refresh.
+   */
+  const sockets: Set<WebSocket> = new Set();
+
+  const socketHandler = (req: Request) => {
+    const { response, socket } = Deno.upgradeWebSocket(req);
+
+    // Add the new socket to our in-memory store
+    // of WebSockets.
+    sockets.add(socket);
+
+    // Remove the socket from our in-memory store
+    // when the socket closes.
+    socket.onclose = () => {
+      sockets.delete(socket);
+    };
+
+    return response;
   };
 
   const handler = async (request: Request) => {
@@ -57,7 +88,9 @@ export const dev = async ({
     const url = new URL(request.url);
     const contentType = mime.lookup(url.pathname);
 
-    const response = url.pathname.startsWith(assetsPath)
+    const response = url.pathname.endsWith("/__micro/refresh")
+      ? socketHandler(request)
+      : url.pathname.startsWith(assetsPath)
       ? await assets(url).catch(errorHandler)
       : contentType === false || contentType === "text/html"
       ? await html(url).catch(errorHandler)
@@ -83,7 +116,7 @@ export const dev = async ({
     return response;
   };
 
-  watch()
+  watch();
 
   const { hostname, port } = new URL(host);
   console.log(`Micro running ${colors.cyan(host)}`);

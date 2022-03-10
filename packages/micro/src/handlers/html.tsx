@@ -1,36 +1,20 @@
 import ReactDOM from "react-dom/server";
 
-import { colors, path } from "../../deps.ts";
+import { path } from "../../deps.ts";
 import { cache } from "../cache.ts";
 import { MicroConfig } from "../config.ts";
 import { headers, httpAssetsRoot, isDev } from "../constants.ts";
-import Html from "../Html.server.tsx";
-import { link as linkHeader } from "../preloader.ts";
-import { getTransform } from "../transform/index.ts";
-
-const entrypoits = {
-  server: "App.server.tsx",
-  client: "App.client.tsx",
-} as const;
+import { getHtml } from "../Html.server.tsx";
 
 export const handler = async (config: MicroConfig) => {
-  const transform = getTransform(config);
-
-  const {
-    metadata: { dependencies = [] },
-  } = await transform(path.join(config.root, entrypoits.client));
-
-  const link = linkHeader(
-    dependencies,
-    path.join(httpAssetsRoot, cache.version(), entrypoits.client)
-  );
+  const { Html, link } = await getHtml(config);
 
   return async (url: URL) => {
     const entrypoint = path.join(
       config.href,
       httpAssetsRoot,
       cache.version(),
-      entrypoits.server
+      "App.server.tsx"
     );
 
     const { default: App } = await import(entrypoint);
@@ -43,9 +27,7 @@ export const handler = async (config: MicroConfig) => {
      */
     const stream: ReadableStream = await (
       ReactDOM as any
-    ).renderToReadableStream(
-      <Html App={App} importmap={config.importmap} url={url} />
-    );
+    ).renderToReadableStream(<Html App={App} url={url} />);
 
     return new Response(stream, {
       status: 200,
