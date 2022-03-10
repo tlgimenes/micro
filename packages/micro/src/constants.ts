@@ -6,4 +6,5 @@ export const headers = {
   "x-powered-by": `Micro v${version}`,
 };
 
-export const httpAssetsRoot = `/__micro/assets`;
+export const httpAssetsRoot = "/__micro/assets";
+export const wsRefreshRoot = "/__micro/refresh";

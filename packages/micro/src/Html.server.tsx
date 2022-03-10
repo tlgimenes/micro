@@ -1,7 +1,7 @@
 import { path } from "../deps.ts";
 import { cache } from "./cache.ts";
 import { MicroConfig } from "./config.ts";
-import { httpAssetsRoot, isDev } from "./constants.ts";
+import { httpAssetsRoot, isDev, wsRefreshRoot } from "./constants.ts";
 import { link as linkHeader } from "./preloader.ts";
 import { getTransform } from "./transform/index.ts";
 
@@ -49,7 +49,7 @@ export const getHtml = async (config: MicroConfig) => {
         {isDev && (
           <script
             type="module"
-            dangerouslySetInnerHTML={{ __html: hmrScript }}
+            dangerouslySetInnerHTML={{ __html: `${hmrScript}\nhmr("${wsRefreshRoot}")` }}
           />
         )}
         <script

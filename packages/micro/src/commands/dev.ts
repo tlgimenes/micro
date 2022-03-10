@@ -1,7 +1,7 @@
 import { colors, mime, serve as stdServe } from "../../deps.ts";
 import { cache } from "../cache.ts";
 import { getConfig } from "../config.ts";
-import { httpAssetsRoot as assetsPath } from "../constants.ts";
+import { httpAssetsRoot as assetsPath, wsRefreshRoot } from "../constants.ts";
 import { handler as assetsHandler } from "../handlers/assets.ts";
 import { handler as errorHandler } from "../handlers/error.ts";
 import { handler as htmlHandler } from "../handlers/html.tsx";
@@ -88,7 +88,7 @@ export const dev = async ({
     const url = new URL(request.url);
     const contentType = mime.lookup(url.pathname);
 
-    const response = url.pathname.endsWith("/__micro/refresh")
+    const response = url.pathname.endsWith(wsRefreshRoot)
       ? socketHandler(request)
       : url.pathname.startsWith(assetsPath)
       ? await assets(url).catch(errorHandler)

@@ -10,7 +10,7 @@ export function Head() {
 export function Main() {
   return (
     <>
-      <div>Hello Wolrd!</div>
+      <div>Hello Wolrd</div>
     </>
   );
 }

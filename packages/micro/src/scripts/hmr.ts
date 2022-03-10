@@ -1,10 +1,10 @@
-(() => {
+export const hmr = (refreshPath: string) => {
   let socket: WebSocket | undefined;
   let reconnectionTimerId: number | undefined;
 
   // Construct the WebSocket url from the current
   // page origin.
-  const requestUrl = `${window.location.origin.replace("http", "ws")}/__micro/refresh`;
+  const requestUrl = `${window.location.origin.replace("http", "ws")}${refreshPath}`;
 
   // Kick off the connection code on load.
   connect(() => log('connected'));
@@ -69,4 +69,4 @@
       }, 1000);
     });
   }
-})();
+};
