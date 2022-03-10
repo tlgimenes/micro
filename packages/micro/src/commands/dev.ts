@@ -35,8 +35,6 @@ export const dev = async ({
     tsconfig: tsconfigJson,
   });
 
-  await assets.pack();
-
   if (isDev) {
     assets.watch();
   }

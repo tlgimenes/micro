@@ -2,9 +2,16 @@ import ReactDOM from "react-dom/server";
 
 import { colors, path } from "../../deps.ts";
 import { Assets } from "../assets.ts";
-import { cacheBuster, headers, httpAssetsRoot as assetsPath, isDev } from "../constants.ts";
+import { cacheBuster, headers, httpAssetsRoot, isDev } from "../constants.ts";
 import Html from "../Html.server.tsx";
 import { link as linkHeader } from "../preloader.ts";
+
+import { genCacheBuster } from "../utils.ts";
+
+const entrypoits = {
+  server: "App.server.tsx",
+  client: "App.client.tsx",
+} as const;
 
 /**
  * @description
@@ -13,21 +20,27 @@ import { link as linkHeader } from "../preloader.ts";
  *
  * To know more: https://github.com/reactwg/react-18/discussions/122
  */
-const render = async (url: URL,
-  assets: Assets,) => {
+const render = async (
+  url: URL,
+  importmap: Deno.ImportMap,
+) => {
   try {
-    console.time('import-app')
-    const buster = (Math.random()*1e3).toFixed(0)
-    console.info({buster})
-    const mod = await assets.import(`App.server.tsx?ts=${buster}`);
-    const { default: App } = mod
-    console.timeEnd('import-app')
+    const cacheVersion = isDev ? genCacheBuster() : cacheBuster;
 
-    console.info(mod)
+    const entrypoint = path.join(
+      "http://localhost:3000",
+      httpAssetsRoot,
+      cacheVersion,
+      entrypoits.server,
+    );
+
+    console.time("import-app");
+    const { default: App } = await import(entrypoint);
+    console.timeEnd("import-app");
 
     const stream: ReadableStream = await (ReactDOM as any)
       .renderToReadableStream(
-        <Html App={App} importmap={assets.importmap} url={url} />,
+        <Html App={App} importmap={importmap} url={url} />,
       );
 
     return { stream, status: 200 };
@@ -47,17 +60,20 @@ export const handler = async (
   url: URL,
   assets: Assets,
 ) => {
-  const entrypoint = "App.client.tsx";
-
   const [
     { stream, status },
     { dependencies = [] },
   ] = await Promise.all([
-    render(url, assets),
-    assets.meta(entrypoint),
+    render(url, assets.importmap),
+    isDev
+      ? { dependencies: [] }
+      : assets.meta(path.join(cacheBuster, entrypoits.client)),
   ]);
 
-  const link = linkHeader(dependencies, path.join(assetsPath, entrypoint));
+  const link = linkHeader(
+    dependencies,
+    path.join(httpAssetsRoot, cacheBuster, entrypoits.client),
+  );
 
   return new Response(stream, {
     status,

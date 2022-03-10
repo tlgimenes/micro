@@ -1,6 +1,7 @@
-import { httpAssetsRoot } from "./constants.ts";
+import { cacheBuster, httpAssetsRoot } from "./constants.ts";
 
 import type { ComponentType } from "react";
+import { path } from "../deps.ts";
 
 type HtmlProps = {
   importmap: Deno.ImportMap;
@@ -12,6 +13,8 @@ export interface AppServerProps {
   url: URL;
 }
 
+const entrypoint = path.join(httpAssetsRoot, cacheBuster, "App.client.tsx")
+
 const script = (importmap: Deno.ImportMap) => `
 import { createElement } from "${importmap.imports["react"]}"
 import { hydrateRoot } from "${importmap.imports["react-dom/client"]}"
@@ -19,7 +22,7 @@ import { hydrateRoot } from "${importmap.imports["react-dom/client"]}"
 const nextTick = (cb) => new Promise(resolve => setTimeout(() => resolve(cb()), 0));
 
 const hydrate = async () => {
-  const { default: App } = await nextTick(async () => await import("${httpAssetsRoot}/App.client.tsx"));
+  const { default: App } = await nextTick(async () => await import("${entrypoint}"));
 
   nextTick(() => {
     hydrateRoot(

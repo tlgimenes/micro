@@ -1,7 +1,7 @@
 import { fs, path, readableStreamFromReader } from "./../deps.ts";
 import { getTransform, Metadata } from "./transform/index.ts";
 import { TSConfig } from "./tsconfig.ts";
-import { cacheBuster, fsAssetsRoot, fsAssetsScope } from './constants.ts'
+import { cacheBuster, fsAssetsRoot } from "./constants.ts";
 
 const supportedExtensions = new Set([".ts", ".tsx"]);
 
@@ -16,13 +16,13 @@ export const getAssets = ({
   importmap: Deno.ImportMap;
   root: string;
 }) => {
-  const transform = getTransform({ tsconfig, importmap });
+  const rawTransform = getTransform({ tsconfig, importmap });
   const assetsRoot = path.join(root, fsAssetsRoot);
 
   const compile = async (filepath: string) => {
-    const { code, metadata } = await transform(filepath);
+    const { code, metadata } = await rawTransform(filepath);
 
-    const outPath = path.join(assetsRoot, filepath.replace(root, ""));
+    const outPath = path.join(assetsRoot, cacheBuster, filepath.replace(root, ""));
     const outPathMeta = `${outPath}.meta`;
 
     await Promise.all([
@@ -33,10 +33,12 @@ export const getAssets = ({
     ]);
   };
 
+  const transform = (file: string) => rawTransform(path.join(root, file))
+
   const pack = async () => {
     const paths = [];
 
-    await fs.emptyDir(path.join(root, fsAssetsScope));
+    await fs.emptyDir(assetsRoot);
 
     // Gathers all paths
     for await (const entry of fs.walk(root)) {

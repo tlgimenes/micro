@@ -1,4 +1,4 @@
-import { path } from '../deps.ts'
+import { genCacheBuster } from "./utils.ts";
 
 export const isDev = Deno.env.get("mode") === "dev";
 
@@ -8,8 +8,7 @@ export const headers = {
   "x-powered-by": `Micro v${version}`,
 };
 
-export const cacheBuster = crypto.randomUUID().split("-")[0]
+export const cacheBuster = genCacheBuster()
 
-export const fsAssetsScope = `./.micro` 
-export const fsAssetsRoot = path.join(fsAssetsScope, cacheBuster)
-export const httpAssetsRoot = `/__micro/assets/${cacheBuster}`;
+export const fsAssetsRoot = `.micro`
+export const httpAssetsRoot = `/__micro/assets`;
