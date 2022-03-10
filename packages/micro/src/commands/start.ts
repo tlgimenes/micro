@@ -15,7 +15,7 @@ interface Options {
   host?: string;
 }
 
-export const serve = async ({
+export const start = async ({
   tsconfig = "./tsconfig.json",
   importmap = "./importmap.json",
   root = "./",

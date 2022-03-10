@@ -16,20 +16,21 @@ const entrypoits = {
 export const handler = async (config: MicroConfig) => {
   const transform = getTransform(config);
 
-  const { metadata: { dependencies = [] } } = await transform(
-    path.join(config.root, entrypoits.client),
+  const {
+    metadata: { dependencies = [] },
+  } = await transform(path.join(config.root, entrypoits.client));
+
+  const link = linkHeader(
+    dependencies,
+    path.join(httpAssetsRoot, cache.version(), entrypoits.client)
   );
 
-  const link = linkHeader(dependencies, entrypoits.client);
-
   return async (url: URL) => {
-    const cacheVersion = cache.version();
-
     const entrypoint = path.join(
       config.href,
       httpAssetsRoot,
-      cacheVersion,
-      entrypoits.server,
+      cache.version(),
+      entrypoits.server
     );
 
     const { default: App } = await import(entrypoint);
@@ -40,10 +41,11 @@ export const handler = async (config: MicroConfig) => {
      *
      * To know more: https://github.com/reactwg/react-18/discussions/122
      */
-    const stream: ReadableStream = await (ReactDOM as any)
-      .renderToReadableStream(
-        <Html App={App} importmap={config.importmap} url={url} />,
-      );
+    const stream: ReadableStream = await (
+      ReactDOM as any
+    ).renderToReadableStream(
+      <Html App={App} importmap={config.importmap} url={url} />
+    );
 
     return new Response(stream, {
       status: 200,
