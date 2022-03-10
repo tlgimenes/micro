@@ -1,7 +1,8 @@
-import { cacheBuster, httpAssetsRoot } from "./constants.ts";
+import { path } from "../deps.ts";
+import { cache } from "./cache.ts";
+import { httpAssetsRoot } from "./constants.ts";
 
 import type { ComponentType } from "react";
-import { path } from "../deps.ts";
 
 type HtmlProps = {
   importmap: Deno.ImportMap;
@@ -13,7 +14,7 @@ export interface AppServerProps {
   url: URL;
 }
 
-const entrypoint = path.join(httpAssetsRoot, cacheBuster, "App.client.tsx")
+const entrypoint = path.join(httpAssetsRoot, cache.version(), "App.client.tsx");
 
 const script = (importmap: Deno.ImportMap) => `
 import { createElement } from "${importmap.imports["react"]}"

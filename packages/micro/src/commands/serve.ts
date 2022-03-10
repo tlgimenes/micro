@@ -1,11 +1,10 @@
-import { colors, mime, path, serve as stdServe } from "../../deps.ts";
-import { getAssets } from "../assets.ts";
-import { httpAssetsRoot as assetsPath, isDev } from "../constants.ts";
+import { colors, mime, serve as stdServe } from "../../deps.ts";
+import { getConfig } from "../config.ts";
+import { httpAssetsRoot as assetsPath } from "../constants.ts";
 import { handler as assetsHandler } from "../handlers/assets.ts";
+import { handler as errorHandler } from "../handlers/error.ts";
 import { handler as htmlHandler } from "../handlers/html.tsx";
 import { handler as publicHandler } from "../handlers/public.ts";
-import { readImportmap } from "../importmap.ts";
-import { readTSConfig } from "../tsconfig.ts";
 
 interface Options {
   /** @default './importmap.json' */
@@ -22,36 +21,34 @@ export const serve = async ({
   root = "./",
   host = "http://localhost:3000",
 }: Options) => {
-  const absoluteRoot = path.resolve(root);
+  const config = await getConfig(
+    root,
+    host,
+    importmap,
+    tsconfig,
+  );
 
-  const [importmapJson, tsconfigJson] = await Promise.all([
-    readImportmap(importmap),
-    readTSConfig(tsconfig),
+  const [
+    assets,
+    html,
+    files,
+  ] = await Promise.all([
+    assetsHandler(config),
+    htmlHandler(config),
+    publicHandler(config),
   ]);
-
-  const assets = getAssets({
-    root: absoluteRoot,
-    importmap: importmapJson,
-    tsconfig: tsconfigJson,
-  });
-
-  await assets.pack();
-
-  if (isDev) {
-    assets.watch();
-  }
 
   const handler = async (request: Request) => {
     const start = performance.now();
 
     const url = new URL(request.url);
-    const contentType = mime.lookup(url.pathname);
+    const contentType = mime.lookup(url.pathname)
 
     const response = url.pathname.startsWith(assetsPath)
-      ? await assetsHandler(url, assets)
+      ? await assets(url).catch(errorHandler)
       : contentType === false || contentType === "text/html"
-      ? await htmlHandler(url, assets)
-      : await publicHandler(url, absoluteRoot);
+      ? await html(url).catch(errorHandler)
+      : await files(url).catch(errorHandler);
 
     const duration = performance.now() - start;
     const status = response.status;
@@ -77,3 +74,4 @@ export const serve = async ({
   console.log(`Micro running ${colors.cyan(host)}`);
   return stdServe(handler, { port: Number(port), hostname });
 };
+

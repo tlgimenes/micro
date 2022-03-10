@@ -1,50 +1,48 @@
-import { Assets } from "../assets.ts";
+import { path } from "../../deps.ts";
+import { cache } from "../cache.ts";
 import { headers, httpAssetsRoot as assetsPath, isDev } from "../constants.ts";
 import { link as linkHeader } from "../preloader.ts";
+import { MicroConfig } from "./../config.ts";
+import { getTransform } from "./../transform/index.ts";
 
-const production = async (url: URL, assets: Assets) => {
-  const filepath = url.pathname.replace(assetsPath, "");
+export const handler = (config: MicroConfig) => {
+  const transform = getTransform(config);
+  const regex = isDev
+    ? new RegExp(`${assetsPath}/[a-zA-Z0-9]+`)
+    : new RegExp(`${assetsPath}/${cache.version()}`); // on production, we can not accept any random version
 
-  const [
-    { stream, status }, 
-    { dependencies = [] }
-  ] = await Promise.all([
-    assets.fetch(filepath),
-    assets.meta(filepath),
-  ]);
+  const cacheControl = isDev
+    ? "no-cache, no-store"
+    : "public, max-age=31536000, immutable";
 
-  const link = linkHeader(dependencies, url.pathname);
+  return async (url: URL) => {
+    const relative = url.pathname.replace(regex, "");
+    const absolute = path.join(config.root, relative);
 
-  return new Response(stream, {
-    status,
-    headers: {
-      ...headers,
-      "content-type": "application/javascript; charset=utf-8",
-      "cache-control": "public, max-age=31536000, immutable",
-      link,
-    },
-  });
+    try {
+      const {
+        code,
+        metadata: { dependencies = [] },
+      } = await transform(absolute);
+
+      const link = linkHeader(dependencies, url.pathname);
+
+      return new Response(code, {
+        headers: {
+          ...headers,
+          "content-type": "application/javascript; charset=utf-8",
+          "cache-control": cacheControl,
+          link,
+        },
+      });
+    } catch (_) {
+      return new Response(null, {
+        status: 404,
+        headers: {
+          ...headers,
+          "cache-control": cacheControl,
+        },
+      });
+    }
+  };
 };
-
-const development = async (url: URL, assets: Assets) => {
-  const cacheBustedPath = new RegExp(`${assetsPath}/[a-zA-Z0-9]+`)
-  const filepath = url.pathname.replace(cacheBustedPath, "");
-
-  const {
-    code,
-    metadata: { dependencies = [] },
-  } = await assets.transform(filepath);
-
-  const link = linkHeader(dependencies, url.pathname);
-
-  return new Response(code, {
-    headers: {
-      ...headers,
-      "content-type": "application/javascript; charset=utf-8",
-      "cache-control": "no-cache, no-store",
-      link,
-    },
-  });
-};
-
-export const handler = isDev ? development : production;
