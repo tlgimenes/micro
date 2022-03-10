@@ -1,11 +1,11 @@
-import { colors, mime, serve as stdServe } from "../../deps.ts";
-import { cache } from "../cache.ts";
-import { getConfig } from "../config.ts";
-import { httpAssetsRoot as assetsPath, wsRefreshRoot } from "../constants.ts";
-import { handler as assetsHandler } from "../handlers/assets.ts";
-import { handler as errorHandler } from "../handlers/error.ts";
-import { handler as htmlHandler } from "../handlers/html.tsx";
-import { handler as publicHandler } from "../handlers/public.ts";
+import { colors, mime, serve as stdServe } from "./../deps.ts";
+import { getConfig } from "./config.ts";
+import { httpAssetsRoot as assetsPath, wsRefreshRoot } from "./constants.ts";
+import { handler as assetsHandler } from "./handlers/assets.ts";
+import { handler as errorHandler } from "./handlers/error.ts";
+import { handler as htmlHandler } from "./handlers/html.tsx";
+import { handler as publicHandler } from "./handlers/public.ts";
+import { handler as refreshHandler } from "./handlers/refresh.ts";
 
 interface Options {
   /** @default './importmap.json' */
@@ -16,7 +16,7 @@ interface Options {
   host?: string;
 }
 
-export const dev = async ({
+export const serve = async ({
   tsconfig = "./tsconfig.json",
   importmap = "./importmap.json",
   root = "./",
@@ -33,54 +33,13 @@ export const dev = async ({
     assets,
     html,
     files,
+    refresh,
   ] = await Promise.all([
     assetsHandler(config),
     htmlHandler(config),
     publicHandler(config),
+    refreshHandler(config),
   ]);
-
-  const watch = async () => {
-    const watcher = Deno.watchFs(config.root);
-    for await (const event of watcher) {
-      if (event.kind === "create" || event.kind === "modify") {
-        /* Reset local cache so SSR works with HMR */
-        cache.reset();
-
-        /* Warns React FastRefresh to upgrade module */
-        sockets.forEach(
-          (socket) =>
-            socket.send(JSON.stringify({
-              type: "refresh",
-              data: {
-                paths: event.paths,
-              },
-            })),
-        );
-      }
-    }
-  };
-
-  /**
-   * In-memory store of open WebSockets for
-   * triggering browser refresh.
-   */
-  const sockets: Set<WebSocket> = new Set();
-
-  const socketHandler = (req: Request) => {
-    const { response, socket } = Deno.upgradeWebSocket(req);
-
-    // Add the new socket to our in-memory store
-    // of WebSockets.
-    sockets.add(socket);
-
-    // Remove the socket from our in-memory store
-    // when the socket closes.
-    socket.onclose = () => {
-      sockets.delete(socket);
-    };
-
-    return response;
-  };
 
   const handler = async (request: Request) => {
     const start = performance.now();
@@ -89,7 +48,7 @@ export const dev = async ({
     const contentType = mime.lookup(url.pathname);
 
     const response = url.pathname.endsWith(wsRefreshRoot)
-      ? socketHandler(request)
+      ? refresh(request)
       : url.pathname.startsWith(assetsPath)
       ? await assets(url).catch(errorHandler)
       : contentType === false || contentType === "text/html"
@@ -115,8 +74,6 @@ export const dev = async ({
 
     return response;
   };
-
-  watch();
 
   const { hostname, port } = new URL(host);
   console.log(`Micro running ${colors.cyan(host)}`);

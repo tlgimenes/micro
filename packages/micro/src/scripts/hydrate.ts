@@ -8,12 +8,12 @@ export const hydrate = async (entrypoint: string) => {
   const App = await nextTick(() => import(entrypoint));
 
   nextTick(() => {
+    console.info("[Micro]: Starting hydration");
+
     hydrateRoot(
       // @ts-expect-error: document is not defined inside Deno
       document.getElementsByTagName("html")[0],
       createElement(App.default),
     );
-
-    console.info("React Hydrated!");
   });
 };

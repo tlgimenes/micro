@@ -1,14 +1,14 @@
-import { isDev } from "../constants.ts";
 import { Babel, BabelPluginImportMap } from "../../deps.ts";
-import { TSConfig } from "../tsconfig.ts";
+import { isDev } from "../constants.ts";
+import { MicroConfig } from "./../config.ts";
 import { BabelMetadataPlugin } from "./plugins/metadata.ts";
 
 export interface Metadata {
-  dependencies?: string[]
+  dependencies?: string[];
 }
 
 export const getTransform = (
-  { importmap, tsconfig }: { tsconfig: TSConfig; importmap: Deno.ImportMap },
+  { importmap, tsconfig }: MicroConfig,
 ) => {
   BabelPluginImportMap.load([importmap]);
   const babelConfig = {
@@ -29,15 +29,17 @@ export const getTransform = (
     minified: !isDev,
   };
 
-  return async (filepath: string): Promise<{ code: string, metadata: Metadata }> => {
+  return async (
+    filepath: string,
+  ): Promise<{ code: string; metadata: Metadata }> => {
     const source = await Deno.readTextFile(filepath);
     const { code, metadata = {} } = Babel.transform(source, {
       ...babelConfig,
       filename: filepath,
     });
 
-    const withComments = `// @ts-nocheck\n${code}`
+    const withComments = `// @ts-nocheck\n${code}`;
 
-    return { code: withComments, metadata }
+    return { code: withComments, metadata };
   };
 };

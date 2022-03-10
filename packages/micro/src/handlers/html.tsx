@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/server";
 import { path } from "../../deps.ts";
 import { cache } from "../cache.ts";
 import { MicroConfig } from "../config.ts";
-import { headers, httpAssetsRoot, isDev } from "../constants.ts";
+import { entrypoints, headers, httpAssetsRoot, isDev } from "../constants.ts";
 import { getHtml } from "../Html.server.tsx";
 
 export const handler = async (config: MicroConfig) => {
@@ -14,7 +14,7 @@ export const handler = async (config: MicroConfig) => {
       config.href,
       httpAssetsRoot,
       cache.version(),
-      "App.server.tsx"
+      entrypoints.server
     );
 
     const { default: App } = await import(entrypoint);

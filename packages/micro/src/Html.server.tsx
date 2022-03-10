@@ -1,7 +1,12 @@
 import { path } from "../deps.ts";
 import { cache } from "./cache.ts";
 import { MicroConfig } from "./config.ts";
-import { httpAssetsRoot, isDev, wsRefreshRoot } from "./constants.ts";
+import {
+  entrypoints,
+  httpAssetsRoot,
+  isDev,
+  wsRefreshRoot,
+} from "./constants.ts";
 import { link as linkHeader } from "./preloader.ts";
 import { getTransform } from "./transform/index.ts";
 
@@ -17,12 +22,11 @@ export interface AppServerProps {
 
 export const getHtml = async (config: MicroConfig) => {
   const transform = getTransform(config);
-  const entrypoint = "App.client.tsx";
-  const fsPath = path.join(config.root, entrypoint);
+  const fsPath = path.join(config.root, entrypoints.client);
   const httpPath = path.join(
     httpAssetsRoot,
     cache.version(),
-    entrypoint,
+    entrypoints.client,
   );
 
   const [
@@ -49,7 +53,9 @@ export const getHtml = async (config: MicroConfig) => {
         {isDev && (
           <script
             type="module"
-            dangerouslySetInnerHTML={{ __html: `${hmrScript}\nhmr("${wsRefreshRoot}")` }}
+            dangerouslySetInnerHTML={{
+              __html: `${hmrScript}\nhmr("${wsRefreshRoot}")`,
+            }}
           />
         )}
         <script

@@ -6,5 +6,10 @@ export const headers = {
   "x-powered-by": `Micro v${version}`,
 };
 
+export const entrypoints = {
+  server: 'App.server.tsx',
+  client: 'App.client.tsx'
+}
+
 export const httpAssetsRoot = "/__micro/assets";
 export const wsRefreshRoot = "/__micro/refresh";
