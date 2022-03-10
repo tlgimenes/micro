@@ -1,12 +1,9 @@
 import { Suspense } from "react";
 import { Link } from "wouter";
 
-interface Props {
-  head: JSX.Element;
-  main: JSX.Element;
-}
+import { Head, Main } from "./pages/index.tsx";
 
-function Shell({ head, main }: Props) {
+function Shell() {
   return (
     <>
       <head>
@@ -17,7 +14,7 @@ function Shell({ head, main }: Props) {
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
         <Suspense fallback={null}>
-          {head}
+          <Head />
         </Suspense>
       </head>
       <body>
@@ -38,7 +35,7 @@ function Shell({ head, main }: Props) {
         </header>
         <main>
           <Suspense fallback={<div>...loading</div>}>
-            {main}
+            <Main />
           </Suspense>
         </main>
         <footer>footer</footer>

@@ -9,4 +9,4 @@ start:
 	mode=prod deno run --allow-all ${c_flags} --no-check=remote ${bin} start --root=${example}
 
 cache:
-	deno cache ${c_flags} --reload --no-check=remote  ${bin} --root=${example}
+	deno cache ${c_flags} --reload --no-check=remote  ${bin}
