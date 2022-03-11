@@ -1,12 +1,12 @@
 {
   "imports": {
-    "react": "https://esm.sh/react@18.0.0-rc.1-next-a59f53a60-20220308?pin=v68",
-    "react/jsx-runtime": "https://esm.sh/react@18.0.0-rc.1-next-a59f53a60-20220308?pin=v68&path=/jsx-runtime",
-    "react/jsx-dev-runtime": "https://esm.sh/react@18.0.0-rc.1-next-a59f53a60-20220308?pin=v68&path=/jsx-dev-runtime",
-    "react-dom/client": "https://esm.sh/react-dom@18.0.0-rc.1-next-a59f53a60-20220308?pin=v68&deps=react@18.0.0-rc.1-next-a59f53a60-20220308&path=/client",
-    "react-dom/server": "https://esm.sh/react-dom@18.0.0-rc.1-next-a59f53a60-20220308?pin=v68&deps=react@18.0.0-rc.1-next-a59f53a60-20220308&path=/server",
-    "wouter": "https://esm.sh/wouter?deps=react@18.0.0-rc.1-next-a59f53a60-20220308&bundle&pin=v68",
-    "wouter/static-location": "https://esm.sh/wouter/static-location?deps=react@18.0.0-rc.1-next-a59f53a60-20220308&bundle&pin=v68",
-    "swr": "https://esm.sh/swr@1.2.2?deps=react@18.0.0-rc.1-next-a59f53a60-20220308&bundle&pin=v68"
+    "react": "https://esm.sh/react@18.0.0-rc.2-next-581f0c42e-20220310?pin=v68",
+    "react/jsx-runtime": "https://esm.sh/react@18.0.0-rc.2-next-581f0c42e-20220310?pin=v68&path=/jsx-runtime",
+    "react/jsx-dev-runtime": "https://esm.sh/react@18.0.0-rc.2-next-581f0c42e-20220310?pin=v68&path=/jsx-dev-runtime",
+    "react-dom/client": "https://esm.sh/react-dom@18.0.0-rc.2-next-581f0c42e-20220310?pin=v68&deps=react@18.0.0-rc.2-next-581f0c42e-20220310&path=/client",
+    "react-dom/server": "https://esm.sh/react-dom@18.0.0-rc.2-next-581f0c42e-20220310?pin=v68&deps=react@18.0.0-rc.2-next-581f0c42e-20220310&path=/server",
+    "wouter": "https://esm.sh/wouter?deps=react@18.0.0-rc.2-next-581f0c42e-20220310&bundle&pin=v68",
+    "wouter/static-location": "https://esm.sh/wouter/static-location?deps=react@18.0.0-rc.2-next-581f0c42e-20220310&bundle&pin=v68",
+    "swr": "https://esm.sh/swr@1.2.2?deps=react@18.0.0-rc.2-next-581f0c42e-20220310&bundle&pin=v68"
   }
 }
