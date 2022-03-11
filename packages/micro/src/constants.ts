@@ -7,8 +7,8 @@ export const headers = {
 };
 
 export const entrypoints = {
-  server: 'App.server.tsx',
-  client: 'App.client.tsx'
+  server: 'App.tsx',
+  client: 'App.tsx'
 }
 
 export const httpAssetsRoot = "/__micro/assets";

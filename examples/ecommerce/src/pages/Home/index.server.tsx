@@ -1,3 +1,5 @@
+import Greeting from "./Greeting.client.tsx";
+
 export function Head() {
   return (
     <>
@@ -10,6 +12,8 @@ export function Head() {
 export function Main() {
   return (
     <>
+      <Greeting />
+
       <div>Hello Wolrd</div>
     </>
   );

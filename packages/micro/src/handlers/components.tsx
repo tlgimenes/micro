@@ -1,10 +1,31 @@
-import ReactDOM from "react-dom/server";
-
 import { path } from "../../deps.ts";
 import { cache } from "../cache.ts";
 import { MicroConfig } from "../config.ts";
 import { entrypoints, headers, httpAssetsRoot, isDev } from "../constants.ts";
 import { getHtml } from "../Html.server.tsx";
+
+import { renderToReadableStream } from "react-server-dom-webpack/writer";
+
+const manifest = {
+  "file:///Users/gimenes/Documents/code/micro/examples/ecommerce/src/pages/Home/Greeting.client.tsx":
+    {
+      "": {
+        id: "./src/pages/Home/Greeting.client.tsx",
+        chunks: ["./src/pages/Home/Greeting.client.tsx"],
+        name: "",
+      },
+      "*": {
+        id: "./src/pages/Home/Greeting.client.tsx",
+        chunks: ["./src/pages/Home/Greeting.client.tsx"],
+        name: "*",
+      },
+      "default": {
+        id: "./src/pages/Home/Greeting.client.tsx",
+        chunks: ["./src/pages/Home/Greeting.client.tsx"],
+        name: "default",
+      },
+    },
+};
 
 export const handler = async (config: MicroConfig) => {
   const { Html, link } = await getHtml(config);
@@ -13,7 +34,7 @@ export const handler = async (config: MicroConfig) => {
     const entrypoint = path.join(
       config.href,
       httpAssetsRoot,
-      'client',
+      'server',
       cache.version(),
       entrypoints.server
     );
@@ -26,9 +47,10 @@ export const handler = async (config: MicroConfig) => {
      *
      * To know more: https://github.com/reactwg/react-18/discussions/122
      */
-    const stream: ReadableStream = await (
-      ReactDOM as any
-    ).renderToReadableStream(<Html App={App} url={url} />);
+    const stream: ReadableStream = await renderToReadableStream(
+      <Html App={App} url={url} />,
+      manifest,
+    );
 
     return new Response(stream, {
       status: 200,

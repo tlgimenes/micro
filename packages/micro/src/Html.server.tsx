@@ -25,6 +25,7 @@ export const getHtml = async (config: MicroConfig) => {
   const fsPath = path.join(config.root, entrypoints.client);
   const httpPath = path.join(
     httpAssetsRoot,
+    'client',
     cache.version(),
     entrypoints.client,
   );
@@ -35,7 +36,7 @@ export const getHtml = async (config: MicroConfig) => {
     { metadata: { dependencies = [] } },
   ] = await Promise.all([
     transform(
-      new URL("./scripts/hydrate.ts", import.meta.url).pathname,
+      new URL("./scripts/hydrate.tsx", import.meta.url).pathname,
     ),
     transform(
       new URL("./scripts/hmr.ts", import.meta.url).pathname,

@@ -1,7 +1,4 @@
-import { Suspense } from "react";
-import { Link } from "wouter";
-
-import { Head, Main } from "./pages/index.tsx";
+import * as Home from './pages/Home/index.server.tsx'
 
 function Shell() {
   return (
@@ -13,30 +10,26 @@ function Shell() {
           name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
-        <Suspense fallback={null}>
-          <Head />
-        </Suspense>
+        <Home.Head />
       </head>
       <body>
         <header>
           <nav>
             <ul>
               <li>
-                <Link href="/">Home</Link>
+                <a href="/">Home</a>
               </li>
               <li>
-                <Link href="/ergonomic-soft-hat-65465029/p">Pdp</Link>
+                <a href="/ergonomic-soft-hat-65465029/p">Pdp</a>
               </li>
               <li>
-                <Link href="/asd">NotFound</Link>
+                <a href="/asd">NotFound</a>
               </li>
             </ul>
           </nav>
         </header>
         <main>
-          <Suspense fallback={<div>...loading</div>}>
-            <Main />
-          </Suspense>
+          <Home.Main />
         </main>
         <footer>footer</footer>
       </body>

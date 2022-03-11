@@ -1,11 +1,12 @@
 import { colors, mime, serve as stdServe } from "./../deps.ts";
 import { getConfig } from "./config.ts";
-import { httpAssetsRoot as assetsPath, wsRefreshRoot } from "./constants.ts";
+import { httpAssetsRoot, wsRefreshRoot } from "./constants.ts";
 import { handler as assetsHandler } from "./handlers/assets.ts";
 import { handler as errorHandler } from "./handlers/error.ts";
 import { handler as htmlHandler } from "./handlers/html.tsx";
 import { handler as publicHandler } from "./handlers/public.ts";
 import { handler as refreshHandler } from "./handlers/refresh.ts";
+import { handler as componentsHandler } from "./handlers/components.tsx";
 
 interface Options {
   /** @default './importmap.json' */
@@ -34,11 +35,13 @@ export const serve = async ({
     html,
     files,
     refresh,
+    components,
   ] = await Promise.all([
     assetsHandler(config),
     htmlHandler(config),
     publicHandler(config),
     refreshHandler(config),
+    componentsHandler(config),
   ]);
 
   const handler = async (request: Request) => {
@@ -49,8 +52,10 @@ export const serve = async ({
 
     const response = url.pathname.endsWith(wsRefreshRoot)
       ? refresh(request)
-      : url.pathname.startsWith(assetsPath)
+      : url.pathname.startsWith(httpAssetsRoot)
       ? await assets(url).catch(errorHandler)
+      : url.pathname.endsWith("/__micro/components")
+      ? await components(url).catch(errorHandler)
       : contentType === false || contentType === "text/html"
       ? await html(url).catch(errorHandler)
       : await files(url).catch(errorHandler);

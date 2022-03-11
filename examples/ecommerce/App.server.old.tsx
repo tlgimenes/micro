@@ -2,7 +2,7 @@ import { SWRConfig } from "swr";
 import { Router } from "wouter";
 import staticLocationHook from "wouter/static-location";
 
-import Shell from "./src/Shell.tsx";
+import Shell from "./src/Shell.server.tsx";
 
 import type { AppServerProps } from "../../packages/micro/mod.ts";
 

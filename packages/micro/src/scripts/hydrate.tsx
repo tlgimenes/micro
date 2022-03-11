@@ -1,11 +1,10 @@
-import { createElement } from "react";
-import { hydrateRoot } from "react-dom/client";
+import { hydrateRoot, createRoot } from "react-dom/client";
 
-const nextTick = <T>(cb: () => T) =>
+const nextTick = <T,>(cb: () => T) =>
   new Promise<T>((resolve) => setTimeout(() => resolve(cb()), 0));
 
 export const hydrate = async (entrypoint: string) => {
-  const App = await nextTick(() => import(entrypoint));
+  const { default: App } = await nextTick(() => import(entrypoint));
 
   nextTick(() => {
     console.info("[Micro]: Starting hydration");
@@ -13,7 +12,7 @@ export const hydrate = async (entrypoint: string) => {
     hydrateRoot(
       // @ts-expect-error: document is not defined inside Deno
       document.getElementsByTagName("html")[0],
-      createElement(App.default),
+      <App />
     );
   });
 };
