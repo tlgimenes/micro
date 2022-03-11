@@ -29,8 +29,6 @@ const readTSConfig = async (path: string): Promise<TSConfig> => {
   try {
     const json = await Deno.readTextFile(path).then(JSON.parse);
 
-    console.info(`using tsconfig from ${path}`);
-
     assertTSConfig(json);
 
     return json;
@@ -54,8 +52,7 @@ const readImportmap = async (
   try {
     const json = await Deno.readTextFile(path).then(JSON.parse);
 
-    console.info(`using importmap from ${path}`);
-    ensureDeps(json);
+    assertDependencies(json);
 
     return json;
   } catch (_) {
@@ -64,7 +61,7 @@ const readImportmap = async (
   }
 };
 
-const ensureDeps = (importmap: Deno.ImportMap) => {
+const assertDependencies = (importmap: Deno.ImportMap) => {
   const required = Object.keys(defaultImportmapJson.imports);
   const deps = new Set(Object.keys(importmap.imports));
 
