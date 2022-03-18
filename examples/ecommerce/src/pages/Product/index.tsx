@@ -12,23 +12,26 @@ export function Head({ params: { slug } }: Props) {
   return (
     <>
       <meta name="robots" content="index,follow" />
-      <title>{product.nameComplete}</title>
+      <title>{product.name}</title>
     </>
   );
 }
 
 export function Main({ params: { slug } }: Props) {
   const product = useProduct(slug);
+  const image = product.images[0];
 
   return (
     <>
-      <div>{product.nameComplete}</div>
-      <img
-        src={product.images[0].imageUrl}
-        width="500px"
-        height="500px"
-      >
-      </img>
+      <div>{product.name}</div>
+      {image && (
+        <img
+          src={image.src}
+          alt={image.alt}
+          width="500px"
+          height="500px"
+        />
+      )}
     </>
   );
 }
