@@ -1,4 +1,4 @@
-example=./examples/ecommerce
+example=./examples/website
 bin=./packages/micro/cli.ts
 c_flags=--config=./deno.json --unstable
 

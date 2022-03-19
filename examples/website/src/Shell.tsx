@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { Link } from "wouter";
+import Navbar from "./components/Navbar.tsx";
 
 import { Head, Main } from "./pages/index.tsx";
 
@@ -20,19 +21,7 @@ function Shell() {
       </head>
       <body>
         <header>
-          <nav className="flex bg-slate-400">
-            <ul>
-              <li>
-                <Link href="/">Home</Link>
-              </li>
-              <li>
-                <Link href="/ergonomic-soft-hat-65465029/p">Pdp</Link>
-              </li>
-              <li>
-                <Link href="/asd">NotFound</Link>
-              </li>
-            </ul>
-          </nav>
+          <Navbar />
         </header>
         <main>
           <Suspense fallback={<div>...loading</div>}>
