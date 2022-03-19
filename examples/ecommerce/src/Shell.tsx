@@ -13,13 +13,14 @@ function Shell() {
           name="viewport"
           content="width=device-width, initial-scale=1, shrink-to-fit=no"
         />
+        <link rel="stylesheet" type="text/css" href="/styles.css" />
         <Suspense fallback={null}>
           <Head />
         </Suspense>
       </head>
       <body>
         <header>
-          <nav>
+          <nav className="flex bg-slate-400">
             <ul>
               <li>
                 <Link href="/">Home</Link>
