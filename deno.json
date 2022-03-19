@@ -3,5 +3,6 @@
     "strict": true,
     "jsx": "react-jsx",
     "jsxImportSource": "react"
-  }
+  },
+  "importMap": "./importmap.json"
 }

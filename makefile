@@ -1,6 +1,6 @@
 example=./examples/ecommerce
 bin=./packages/micro/cli.ts
-c_flags=--import-map=./importmap.json --config=./tsconfig.json --unstable
+c_flags=--config=./deno.json --unstable
 
 dev:
 	mode=dev deno run --allow-all ${c_flags} --no-check=remote --watch ${bin} start --root=${example}

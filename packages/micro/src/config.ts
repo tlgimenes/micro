@@ -14,35 +14,40 @@ const defaultImportmapJson = {
   },
 } as const;
 
-const defaultTSConfigJson = {
+const defaultDenoConfig = {
   compilerOptions: {
     jsx: "react-jsx",
     jsxImportSource: "react",
   },
+  importMap: "./importmap.json",
 } as const;
 
-export interface TSConfig {
+export interface DenoConfig {
   compilerOptions: Deno.CompilerOptions;
+  importMap: string;
 }
 
-const readTSConfig = async (path: string): Promise<TSConfig> => {
+const readDenoConfig = async (path: string): Promise<DenoConfig> => {
   try {
     const json = await Deno.readTextFile(path).then(JSON.parse);
 
-    assertTSConfig(json);
+    assertDenoConfig(json);
 
     return json;
   } catch (_) {
-    console.info("No valid tsconfig found. Using default config");
-    return defaultTSConfigJson;
+    console.info("No valid config found. Using default config");
+    return defaultDenoConfig;
   }
 };
 
-const assertTSConfig = (tsconfig: TSConfig) => {
-  if (tsconfig.compilerOptions.jsx !== "react-jsx") {
+const assertDenoConfig = (config: DenoConfig) => {
+  if (config.compilerOptions.jsx !== "react-jsx") {
     throw new Error(
-      'We only accept jsx="react-jsx" for now. Please change your tsconfig.json and try again',
+      'We only accept jsx="react-jsx" for now. Please change your config and try again',
     );
+  }
+  if (typeof config.importMap !== "string") {
+    throw new Error("Missing importMap in your config file");
   }
 };
 
@@ -77,14 +82,18 @@ const assertDependencies = (importmap: Deno.ImportMap) => {
 export const getConfig = async (
   root: string,
   href: string,
-  importmap: string,
-  tsconfig: string,
-) => ({
-  root: path.resolve(root),
-  href,
-  importmap: await readImportmap(importmap),
-  tsconfig: await readTSConfig(tsconfig),
-});
+  denoConfigPath: string,
+) => {
+  const denoConfig = await readDenoConfig(denoConfigPath);
+  const importmap = await readImportmap(denoConfig.importMap);
+
+  return ({
+    root: path.resolve(root),
+    href,
+    importmap,
+    denoConfig,
+  });
+};
 
 type PromiseType<T> = T extends Promise<infer K> ? K : never;
 

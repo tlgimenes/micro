@@ -8,7 +8,7 @@ export interface Metadata {
 }
 
 export const getTransform = (
-  { importmap, tsconfig }: MicroConfig,
+  { importmap, denoConfig }: MicroConfig,
 ) => {
   BabelPluginImportMap.load([importmap]);
   const babelConfig = {
@@ -16,7 +16,7 @@ export const getTransform = (
       ["react", {
         runtime: "automatic",
         development: isDev,
-        importSource: tsconfig.compilerOptions.jsxImportSource,
+        importSource: denoConfig.compilerOptions.jsxImportSource,
       }],
       "typescript",
     ],

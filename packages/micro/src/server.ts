@@ -1,6 +1,6 @@
 import { colors, mime, serve as stdServe } from "./../deps.ts";
 import { getConfig } from "./config.ts";
-import { httpAssetsRoot as assetsPath, wsRefreshRoot } from "./constants.ts";
+import { httpAssetsRoot, wsRefreshRoot } from "./constants.ts";
 import { handler as assetsHandler } from "./handlers/assets.ts";
 import { handler as errorHandler } from "./handlers/error.ts";
 import { handler as htmlHandler } from "./handlers/html.tsx";
@@ -8,25 +8,21 @@ import { handler as publicHandler } from "./handlers/public.ts";
 import { handler as refreshHandler } from "./handlers/refresh.ts";
 
 interface Options {
-  /** @default './importmap.json' */
-  importmap?: string;
-  /** @default './tsconfig.json' */
-  tsconfig?: string;
+  /** @default './deno.json' */
+  denoConfig?: string;
   root?: string;
   host?: string;
 }
 
 export const serve = async ({
-  tsconfig = "./tsconfig.json",
-  importmap = "./importmap.json",
+  denoConfig = "./deno.json",
   root = "./",
   host = "http://localhost:3000",
 }: Options) => {
   const config = await getConfig(
     root,
     host,
-    importmap,
-    tsconfig,
+    denoConfig,
   );
 
   const [
@@ -49,7 +45,7 @@ export const serve = async ({
 
     const response = url.pathname.endsWith(wsRefreshRoot)
       ? refresh(request)
-      : url.pathname.startsWith(assetsPath)
+      : url.pathname.startsWith(httpAssetsRoot)
       ? await assets(url).catch(errorHandler)
       : contentType === false || contentType === "text/html"
       ? await html(url).catch(errorHandler)
