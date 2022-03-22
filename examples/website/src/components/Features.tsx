@@ -1,7 +1,5 @@
-import { ComponentProps } from "react";
-
 import Icon from "./Icon.tsx";
-import Section from "./Section.tsx";
+import Section, { Props as SectionProps } from "./Section.tsx";
 
 interface Feature {
   variant: "right" | "left";
@@ -20,7 +18,7 @@ function Feature({
 }: Feature) {
   return (
     <div
-      className={`flex flex-wrap py-10 gap-4 items-center sm:flex-nowrap sm:justify-center ${
+      className={`flex flex-wrap my-20 gap-4 items-center sm:flex-nowrap sm:justify-center ${
         variant === "right" ? "sm:flex-row-reverse" : "flex-row"
       }`}
     >
@@ -37,7 +35,7 @@ function Feature({
         <h3 className="text-gray-700">{subtitle}</h3>
         <ul>
           {highlights.map((highlight, index) => (
-            <li key={index} className="text-gray-500 my-2">
+            <li key={index} className="text-gray-700 my-2">
               <span className="inline-flex items-center justify-center w-6 h-6 mr-2 text-white bg-indigo-600 rounded-full">
                 <span className="text-sm font-bold">✓</span>
               </span>{" "}
@@ -50,7 +48,7 @@ function Feature({
   );
 }
 
-interface Props extends ComponentProps<typeof Section> {
+interface Props extends SectionProps {
   features: Omit<Feature, "variant">[];
 }
 

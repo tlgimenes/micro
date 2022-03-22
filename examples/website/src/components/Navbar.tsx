@@ -50,7 +50,7 @@ function Navbar() {
   return (
     <nav className="h-16 border-b-2 border-gray-200 flex justify-between items-center px-2 sm:px-4">
       <div className="flex items-center gap-2">
-        <button className="p-2 sm:hidden" onClick={() => setDisplayMenu(true)}>
+        <button className="p-2 sm:hidden" onClick={() => setDisplayMenu(true)} aria-label="menu">
           <Icon name="menu" width={32} height={32}></Icon>
         </button>
         <Logo />
@@ -58,7 +58,7 @@ function Navbar() {
 
       <Links className="hidden sm:flex sm:gap-4" />
 
-      <button className="p-3">
+      <button className="p-3" aria-label="search">
         <Icon name="search" width={24} height={24}></Icon>
       </button>
 
@@ -66,7 +66,7 @@ function Navbar() {
         <>
           <header className="h-16 border-b-2 border-gray-200 flex items-center justify-between px-4">
             <Logo />
-            <button className="p-2" onClick={() => setDisplayMenu(false)}>
+            <button className="p-2" onClick={() => setDisplayMenu(false)} aria-label="close">
               <Icon name="x" width={24} height={24}></Icon>
             </button>
           </header>

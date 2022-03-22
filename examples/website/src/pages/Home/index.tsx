@@ -1,8 +1,6 @@
 import Action from "../../components/Action.tsx";
-import Feature from "../../components/Feature.tsx";
 import Features from "../../components/Features.tsx";
 import Hero from "../../components/Hero.tsx";
-import Section from "../../components/Section.tsx";
 
 export function Head() {
   return (
@@ -24,6 +22,7 @@ export function Main() {
       />
 
       <Features
+        className="bg-slate-100"
         id="features"
         features={[
           {
@@ -75,35 +74,30 @@ export function Main() {
       <Action
         title="Built for performance"
         subtitle="Test Micro real world performance at Google Page Speed Insights"
-        action="Test"
-        href="/"
+        links={[
+          {
+            name: "Test",
+            href: "/",
+          },
+          undefined,
+        ]}
       />
 
-      <Section className="py-20 bg-white">
-        <div className="px-4 mx-auto text-center max-w-7xl sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl md:text-5xl xl:text-6xl">
-            Use the future of the Web today
-          </h2>
-          <p className="max-w-md mx-auto mt-3 text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-            Start learning Micro.ts by folowing the tutorial. Become a pro by
-            reading our docs
-          </p>
-          <div className="flex justify-center mt-8 space-x-3">
-            <a
-              href="#"
-              className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow hover:bg-indigo-700"
-            >
-              Quickstart
-            </a>
-            <a
-              href="#"
-              className="inline-flex items-center justify-center px-5 py-3 text-base font-medium text-indigo-700 bg-indigo-100 border border-transparent rounded-md hover:bg-indigo-200"
-            >
-              Docs
-            </a>
-          </div>
-        </div>
-      </Section>
+      <Action
+        className="bg-slate-100"
+        title="Use the future of the Web today"
+        subtitle="Start learning Micro.ts by folowing the tutorial. Become a pro by reading our docs"
+        links={[
+          {
+            name: "Quickstart",
+            href: "/quickstart",
+          },
+          {
+            name: "Docs",
+            href: "/docs",
+          },
+        ]}
+      />
     </>
   );
 }

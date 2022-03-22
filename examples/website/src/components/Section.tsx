@@ -1,10 +1,17 @@
-import type { PropsWithChildren, HTMLAttributes } from "react";
+import { PropsWithChildren, HTMLAttributes } from "react";
+import { useCn } from "../hooks/useCn.ts";
 
-type Props = HTMLAttributes<HTMLDivElement>;
+export type Props = HTMLAttributes<HTMLDivElement>;
 
-function Section({ children, ...rest }: PropsWithChildren<Props>) {
+function Section({
+  children,
+  className = "",
+  ...rest
+}: PropsWithChildren<Props>) {
+  const clx = useCn(className, "w-full px-4 py-32");
+
   return (
-    <section className="w-full px-4" {...rest}>
+    <section className={clx} {...rest}>
       {children}
     </section>
   );
