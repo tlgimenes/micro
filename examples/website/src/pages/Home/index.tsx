@@ -1,5 +1,6 @@
 import Action from "../../components/Action.tsx";
 import Feature from "../../components/Feature.tsx";
+import Features from "../../components/Features.tsx";
 import Hero from "../../components/Hero.tsx";
 import Section from "../../components/Section.tsx";
 
@@ -22,58 +23,54 @@ export function Main() {
         link="#features"
       />
 
-      <Section
+      <Features
         id="features"
-        className="w-full bg-white pt-7 pb-7 md:pt-20 md:pb-24"
-      >
-        <Feature
-          variant="left"
-          icon="server"
-          title="Server Components"
-          subtitle="Have the best performance web can offer by moving logic from client to server"
-          features={[
-            "Zero bundle size components",
-            "Less roundtrips to the server",
-            "Offload complex operations to the edge",
-          ]}
-        />
-        <Feature
-          variant="right"
-          icon="cast"
-          title="Stream Rendering"
-          subtitle="Return content to the user as soon as it's ready"
-          features={[
-            "Progressive rendering",
-            "App Shell logic",
-            "Web Compatible",
-          ]}
-        />
-        <Feature
-          variant="left"
-          icon="cloud"
-          title="Edge Native"
-          subtitle="Run the server near your users"
-          features={["Deno deploy", "Vercel"]}
-        />
-        <Feature
-          variant="right"
-          icon="image"
-          title="Image optimization"
-          subtitle="Optimize images to best fit your user devices"
-          features={[
-            "Encoding optimization (WebP, Jpeg2)",
-            "Responsive images",
-            "Image Preload",
-          ]}
-        />
-        <Feature
-          variant="left"
-          icon="activity"
-          title="Lazy Rendering"
-          subtitle="Defer non-blocking computations"
-          features={["Client Side Rendering", "Server Side Rendering"]}
-        />
-      </Section>
+        features={[
+          {
+            icon: "server",
+            title: "Server Components",
+            subtitle:
+              "Have the best performance web can offer by moving logic from client to server",
+            highlights: [
+              "Zero bundle size components",
+              "Less roundtrips to the server",
+              "Offload complex operations to the edge",
+            ],
+          },
+          {
+            icon: "cast",
+            title: "Stream Rendering",
+            subtitle: "Return content to the user as soon as it's ready",
+            highlights: [
+              "Progressive rendering",
+              "App Shell logic",
+              "Web Compatible",
+            ],
+          },
+          {
+            icon: "cloud",
+            title: "Edge Native",
+            subtitle: "Run the server near your users",
+            highlights: ["Deno deploy", "Vercel"],
+          },
+          {
+            icon: "image",
+            title: "Image optimization",
+            subtitle: "Optimize images to best fit your user devices",
+            highlights: [
+              "Encoding optimization (WebP, Jpeg2)",
+              "Responsive images",
+              "Image Preload",
+            ],
+          },
+          {
+            icon: "activity",
+            title: "Lazy Rendering",
+            subtitle: "Defer non-blocking computations",
+            highlights: ["Client Side Rendering", "Server Side Rendering"],
+          },
+        ]}
+      />
 
       <Action
         title="Built for performance"

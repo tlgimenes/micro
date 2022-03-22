@@ -10,9 +10,9 @@ interface Props {
 function Hero({ title, subtitle, action, link }: Props) {
   return (
     <Section>
-      <div className="container max-w-lg px-4 py-32 mx-auto text-left md:max-w-none md:text-center">
+      <div className="container max-w-lg py-32 mx-auto text-left md:max-w-none md:text-center">
         <h1 className="text-5xl font-extrabold leading-10 tracking-tight text-left text-gray-900 md:text-center sm:leading-none md:text-6xl lg:text-7xl">
-          <span className="inline md:block">Micro.ts</span>{" "}
+          <span className="block">Micro.ts</span>
           <span className="relative mt-2 text-transparent bg-clip-text bg-gradient-to-br from-indigo-600 to-indigo-500 md:inline-block">
             {title}
           </span>
