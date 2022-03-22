@@ -23,7 +23,7 @@ function Feature({
       }`}
     >
       <Icon
-        className="text-indigo-500 w-full sm:max-w-sm"
+        className="text-indigo-600 w-full sm:max-w-sm"
         name={icon}
         strokeWidth="0.75"
         width={150}

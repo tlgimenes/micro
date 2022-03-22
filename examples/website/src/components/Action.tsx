@@ -28,7 +28,7 @@ function Action({ title, subtitle, links, ...rest }: Props) {
         {links[0] && (
           <a
             href={links[0].href}
-            className="text-center w-full sm:w-36 px-5 py-3 mx-2 rounded hover:bg-indigo-700 bg-indigo-500 text-white"
+            className="text-center w-full sm:w-36 px-5 py-3 mx-2 rounded hover:bg-indigo-700 bg-indigo-600 text-white"
           >
             <span className="px-2">{links[0].name}</span>
           </a>
@@ -37,7 +37,7 @@ function Action({ title, subtitle, links, ...rest }: Props) {
         {links[1] && (
           <a
             href={links[1].href}
-            className="text-center w-full sm:w-36 max-w-md px-5 py-3 mx-2 rounded hover:bg-slate-300 bg-slate-200 text-indigo-500 "
+            className="text-center w-full sm:w-36 max-w-md px-5 py-3 mx-2 rounded hover:bg-slate-300 bg-slate-200 text-indigo-600 "
           >
             <span className="px-2">{links[1].name}</span>
           </a>

@@ -34,7 +34,7 @@ const Links = ({ className }: { className?: string }) => (
         <li key={href}>
           <Link
             href={href}
-            className={isActive ? "text-indigo-500 font-bold" : ""}
+            className={isActive ? "text-indigo-600 font-bold" : ""}
           >
             {name}
           </Link>

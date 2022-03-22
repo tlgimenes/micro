@@ -761,6 +761,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-gradient-to: #6366f1;
 }
 
+.to-indigo-600 {
+  --tw-gradient-to: #4f46e5;
+}
+
 .bg-clip-text {
   -webkit-background-clip: text;
           background-clip: text;
@@ -937,6 +941,11 @@ Ensure the default browser behavior of the `hidden` attribute.
   color: transparent;
 }
 
+.text-indigo-600 {
+  --tw-text-opacity: 1;
+  color: rgb(79 70 229 / var(--tw-text-opacity));
+}
+
 .hover\:bg-indigo-700:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(67 56 202 / var(--tw-bg-opacity));
@@ -950,6 +959,11 @@ Ensure the default browser behavior of the `hidden` attribute.
 .hover\:bg-indigo-500:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(99 102 241 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-indigo-600:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(79 70 229 / var(--tw-bg-opacity));
 }
 
 .hover\:text-gray-900:hover {

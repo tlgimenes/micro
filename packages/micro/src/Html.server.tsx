@@ -47,7 +47,7 @@ export const getHtml = async (config: MicroConfig) => {
 
   const Html = ({ url, App }: HtmlProps) => {
     return (
-      <html>
+      <html lang="en-US">
         <App url={url} />
 
         {isDev && (

@@ -13,7 +13,7 @@ function Hero({ title, subtitle, action, link, ...rest }: Props) {
       <div className="container max-w-lg mx-auto text-left md:max-w-none md:text-center">
         <h1 className="text-5xl font-extrabold text-left text-gray-900 md:text-center sm:leading-none md:text-6xl lg:text-7xl">
           <span className="block">Micro.ts</span>
-          <span className="relative mt-2 text-transparent bg-clip-text bg-gradient-to-br from-indigo-600 to-indigo-500 md:inline-block">
+          <span className="relative mt-2 text-transparent bg-clip-text bg-gradient-to-br from-indigo-600 to-indigo-600 md:inline-block">
             {title}
           </span>
         </h1>
@@ -25,7 +25,7 @@ function Hero({ title, subtitle, action, link, ...rest }: Props) {
             <a
               href={link}
               type="button"
-              className="inline-flex items-center justify-center w-full px-8 py-4 text-base font-bold leading-6 text-white bg-indigo-500 border border-transparent rounded-full md:w-auto hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600"
+              className="inline-flex items-center justify-center w-full px-8 py-4 text-base font-bold leading-6 text-white bg-indigo-600 border border-transparent rounded-full md:w-auto hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600"
             >
               {action}
             </a>
