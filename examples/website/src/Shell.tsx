@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { Link } from "wouter";
+import Footer from "./components/Footer.tsx";
 import Navbar from "./components/Navbar.tsx";
 
 import { Head, Main } from "./pages/index.tsx";
@@ -28,7 +29,7 @@ function Shell() {
             <Main />
           </Suspense>
         </main>
-        <footer>footer</footer>
+        <Footer />
       </body>
     </>
   );
