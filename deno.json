@@ -4,11 +4,5 @@
     "jsx": "react-jsx",
     "jsxImportSource": "react"
   },
-  "importMap": "./importmap.json",
-  "tasks": {
-    "dev": "",
-    "start": "",
-    "micro": "mode=prod deno run --allow-net --allow-read --allow-env --unstable --no-check ./examples/website/server.ts",
-    "tailwind": ""
-  }
+  "importMap": "./importmap.json"
 }
