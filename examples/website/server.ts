@@ -4,5 +4,5 @@ import { serve } from "../../packages/micro/server.ts";
 const port = Deno.env.get("PORT") ?? "3000";
 
 await serve({
-  host: `http://localhost:${port}`,
+  host: `http://0.0.0.0:${port}`,
 });
