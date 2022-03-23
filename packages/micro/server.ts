@@ -14,7 +14,7 @@ interface Options {
   host?: string;
 }
 
-export const serve = async ({
+export const getHandler = async ({
   denoConfig = "./deno.json",
   root = "./",
   host = "http://localhost:3000",
@@ -37,7 +37,7 @@ export const serve = async ({
     refreshHandler(config),
   ]);
 
-  const handler = async (request: Request) => {
+  return async (request: Request) => {
     const start = performance.now();
 
     const url = new URL(request.url);
@@ -70,7 +70,15 @@ export const serve = async ({
 
     return response;
   };
+};
 
+export const serve = async ({
+  denoConfig = "./deno.json",
+  root = "./",
+  host = "http://localhost:3000",
+}: Options | undefined = {}) => {
+  const handler = await getHandler({ denoConfig, root, host });
+  
   const { hostname, port } = new URL(host);
   console.log(`Micro running ${colors.cyan(host)}`);
   return stdServe(handler, { port: Number(port), hostname });
