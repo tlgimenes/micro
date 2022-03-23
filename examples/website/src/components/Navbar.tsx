@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Link, useRoute } from "wouter";
+import { useRoute } from "wouter";
 
 import Icon from "./Icon.tsx";
+import Link from "./Link.tsx";
 import Sidebar from "./Sidebar.tsx";
 
 const links = [

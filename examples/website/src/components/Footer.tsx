@@ -1,6 +1,7 @@
-import { Link, useRoute } from "wouter";
+import { useRoute } from "wouter";
 
 import { useCn } from "../hooks/useCn.ts";
+import Link from "./Link.tsx";
 
 const links = [
   {

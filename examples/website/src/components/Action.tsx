@@ -1,6 +1,5 @@
-import { Link } from "wouter";
-
 import { useCn } from "../hooks/useCn.ts";
+import Link from "./Link.tsx";
 import Section, { Props as SectionProps } from "./Section.tsx";
 
 interface Link {
