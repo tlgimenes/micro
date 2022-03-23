@@ -1,3 +1,8 @@
 import { serve } from "../../packages/micro/server.ts";
 
-await serve()
+// Support deploy on heroku
+const port = Deno.env.get("PORT") ?? "3000";
+
+await serve({
+  host: `http://localhost:${port}`,
+});
