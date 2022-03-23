@@ -1,11 +1,11 @@
-import { colors, mime, serve as stdServe } from "./../deps.ts";
-import { getConfig } from "./config.ts";
-import { httpAssetsRoot, wsRefreshRoot } from "./constants.ts";
-import { handler as assetsHandler } from "./handlers/assets.ts";
-import { handler as errorHandler } from "./handlers/error.ts";
-import { handler as htmlHandler } from "./handlers/html.tsx";
-import { handler as publicHandler } from "./handlers/public.ts";
-import { handler as refreshHandler } from "./handlers/refresh.ts";
+import { colors, mime, serve as stdServe } from "./deps.ts";
+import { getConfig } from "./src/config.ts";
+import { httpAssetsRoot, wsRefreshRoot } from "./src/constants.ts";
+import { handler as assetsHandler } from "./src/handlers/assets.ts";
+import { handler as errorHandler } from "./src/handlers/error.ts";
+import { handler as htmlHandler } from "./src/handlers/html.tsx";
+import { handler as publicHandler } from "./src/handlers/public.ts";
+import { handler as refreshHandler } from "./src/handlers/refresh.ts";
 
 interface Options {
   /** @default './deno.json' */
@@ -18,7 +18,7 @@ export const serve = async ({
   denoConfig = "./deno.json",
   root = "./",
   host = "http://localhost:3000",
-}: Options) => {
+}: Options | undefined = {}) => {
   const config = await getConfig(
     root,
     host,

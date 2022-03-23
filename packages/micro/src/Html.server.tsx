@@ -11,6 +11,7 @@ import { link as linkHeader } from "./preloader.ts";
 import { getTransform } from "./transform/index.ts";
 
 import type { ComponentType } from "react";
+
 type HtmlProps = {
   url: URL;
   App: ComponentType<AppServerProps>;
