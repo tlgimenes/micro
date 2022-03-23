@@ -32,7 +32,7 @@ function Action({ title, subtitle, links, ...rest }: Props) {
             href={links[0].href}
             className="text-center w-full sm:w-36 px-5 py-3 mx-2 rounded hover:bg-indigo-700 bg-indigo-600 text-white"
           >
-            <span className="px-2">{links[0].name}</span>
+            {links[0].name}
           </Link>
         )}
 
@@ -41,7 +41,7 @@ function Action({ title, subtitle, links, ...rest }: Props) {
             href={links[1].href}
             className="text-center w-full sm:w-36 max-w-md px-5 py-3 mx-2 rounded hover:bg-slate-300 bg-slate-200 text-indigo-600 "
           >
-            <span className="px-2">{links[1].name}</span>
+            {links[1].name}
           </Link>
         )}
       </div>
