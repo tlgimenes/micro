@@ -1,1 +1,1 @@
-web: cd examples/website && deno task start
+web: cd examples/website && deno task micro
