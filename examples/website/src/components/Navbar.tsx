@@ -25,7 +25,13 @@ const Logo = () => (
   </Link>
 );
 
-const Links = ({ className }: { className?: string }) => (
+const Links = ({
+  className,
+  onClick,
+}: {
+  className?: string;
+  onClick?: () => void;
+}) => (
   <ul className={className}>
     {links.map(({ name, href }) => {
       const [isActive] = useRoute(href);
@@ -35,6 +41,7 @@ const Links = ({ className }: { className?: string }) => (
           <Link
             href={href}
             className={isActive ? "text-indigo-600 font-bold" : ""}
+            onClick={onClick}
           >
             {name}
           </Link>
@@ -50,7 +57,11 @@ function Navbar() {
   return (
     <nav className="h-16 border-b-2 border-gray-200 flex justify-between items-center px-2 sm:px-4">
       <div className="flex items-center gap-2">
-        <button className="p-2 sm:hidden" onClick={() => setDisplayMenu(true)} aria-label="menu">
+        <button
+          className="p-2 sm:hidden"
+          onClick={() => setDisplayMenu(true)}
+          aria-label="menu"
+        >
           <Icon name="menu" width={32} height={32}></Icon>
         </button>
         <Logo />
@@ -66,12 +77,19 @@ function Navbar() {
         <>
           <header className="h-16 border-b-2 border-gray-200 flex items-center justify-between px-4">
             <Logo />
-            <button className="p-2" onClick={() => setDisplayMenu(false)} aria-label="close">
+            <button
+              className="p-2"
+              onClick={() => setDisplayMenu(false)}
+              aria-label="close"
+            >
               <Icon name="x" width={24} height={24}></Icon>
             </button>
           </header>
 
-          <Links className="flex flex-col gap-4 pt-4 px-6" />
+          <Links
+            className="flex flex-col gap-4 pt-4 px-6"
+            onClick={() => setDisplayMenu(false)}
+          />
         </>
       </Sidebar>
     </nav>

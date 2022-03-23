@@ -6,9 +6,9 @@
   },
   "importMap": "./importmap.json",
   "tasks": {
-    "dev": "deno task tailwind -- -w & mode=dev deno task micro",
-    "start": "deno task tailwind && mode=prod deno task micro",
-    "micro": "deno run --allow-net --allow-read --allow-env --unstable --no-check server.ts",
+    "dev": "deno task tailwind -- -w & mode=dev deno task start",
+    "build": "deno task tailwind && mode=prod deno task start",
+    "start": "deno run --allow-net --allow-read --allow-env --unstable --no-check server.ts",
     "tailwind": "npx tailwindcss -c tailwind.config.js -i App.css -o public/styles.css"
   }
 }

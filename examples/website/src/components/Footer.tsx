@@ -1,32 +1,44 @@
+import { Link, useRoute } from "wouter";
+
+import { useCn } from "../hooks/useCn.ts";
+
+const links = [
+  {
+    name: "About",
+    href: "/",
+  },
+  {
+    name: "Quickstart",
+    href: "/quickstart",
+  },
+  {
+    name: "Docs",
+    href: "/docs",
+  },
+];
+
 function Footer() {
   return (
     <footer className="bg-white">
       <div className="max-w-screen-xl px-4 py-12 mx-auto space-y-8 overflow-hidden sm:px-6 lg:px-8">
         <nav className="flex flex-wrap justify-center -mx-5 -my-2">
-          <div className="px-5 py-2">
-            <a
-              href="/"
-              className="text-base leading-6 text-gray-700 hover:text-gray-900"
-            >
-              About
-            </a>
-          </div>
-          <div className="px-5 py-2">
-            <a
-              href="#"
-              className="text-base leading-6 text-gray-700 hover:text-gray-900"
-            >
-              Quickstart
-            </a>
-          </div>
-          <div className="px-5 py-2">
-            <a
-              href="#"
-              className="text-base leading-6 text-gray-700 hover:text-gray-900"
-            >
-              Docs
-            </a>
-          </div>
+          {links.map(({ name, href }) => {
+            const [isActive] = useRoute(href);
+            const cn = useCn(
+              "text-base leading-6 ",
+              isActive
+                ? "text-gray-600 hover:text-gray-600"
+                : "text-gray-900 hover:text-gray-600"
+            );
+
+            return (
+              <div key={href} className="px-5 py-2">
+                <Link href={href} className={cn}>
+                  {name}
+                </Link>
+              </div>
+            );
+          })}
         </nav>
         <div className="flex justify-center mt-8 space-x-6">
           <a href="#" className="text-gray-500 hover:text-gray-700">
@@ -109,4 +121,4 @@ function Footer() {
   );
 }
 
-export default Footer
+export default Footer;

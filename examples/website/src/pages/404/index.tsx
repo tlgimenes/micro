@@ -9,8 +9,9 @@ export function Head() {
 
 export function Main() {
   return (
-    <>
-      <div>Not Found!</div>
-    </>
+    <div className="flex items-center justify-center text-2xl font-thin min-h-screen divide-x">
+      <span className="px-2">404</span>
+      <span className="px-2">Not Found</span>
+    </div>
   );
 }

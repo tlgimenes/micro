@@ -24,7 +24,7 @@ function Shell() {
         <header>
           <Navbar />
         </header>
-        <main>
+        <main className="min-h-screen">
           <Suspense fallback={<div>...loading</div>}>
             <Main />
           </Suspense>

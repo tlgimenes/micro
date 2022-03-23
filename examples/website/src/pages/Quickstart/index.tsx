@@ -1,21 +1,16 @@
-import Action from "../../components/Action.tsx";
-import Feature from "../../components/Feature.tsx";
-import Hero from "../../components/Hero.tsx";
-import Section from "../../components/Section.tsx";
-
 export function Head() {
   return (
     <>
       <meta name="robots" content="index,follow" />
-      <title>Micro.ts - A minimalistic framework</title>
+      <title>Micro.ts - Quickstart</title>
     </>
   );
 }
 
 export function Main() {
   return (
-    <>
-      <div>TODO</div>
-    </>
+    <div className="flex items-center justify-center text-2xl font-thin min-h-screen">
+      Coming soon...
+    </div>
   );
 }
