@@ -1,4 +1,4 @@
-#!/usr/bin/env deno run --no-check --unstable
+#!/usr/bin/env deno run --no-check --unstable --include-files=../../**/*
 
 import { getHandler } from "../../../packages/micro/server.ts";
 
