@@ -1,4 +1,9 @@
-import { Babel, BabelPluginImportMap } from "../../deps.ts";
+import {
+  Babel,
+  BabelPluginImportMap,
+  BabelPresetReact,
+  BabelPresetTypescript,
+} from "../../deps.ts";
 import { isDev } from "../constants.ts";
 import { MicroConfig } from "./../config.ts";
 import { BabelMetadataPlugin } from "./plugins/metadata.ts";
@@ -13,12 +18,12 @@ export const getTransform = (
   BabelPluginImportMap.load([importmap]);
   const babelConfig = {
     presets: [
-      ["react", {
+      [BabelPresetReact, {
         runtime: "automatic",
         development: isDev,
         importSource: denoConfig.compilerOptions.jsxImportSource,
       }],
-      "typescript",
+      BabelPresetTypescript,
     ],
     plugins: [
       BabelPluginImportMap.plugin(),
@@ -36,7 +41,7 @@ export const getTransform = (
     const { code, metadata = {} } = Babel.transform(source, {
       ...babelConfig,
       filename: filepath,
-    });
+    })!;
 
     const withComments = `// @ts-nocheck\n${code}`;
 
