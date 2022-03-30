@@ -88,7 +88,7 @@ export const getConfig = async (
   const importmap = await readImportmap(denoConfig.importMap);
 
   return ({
-    root: path.resolve(root),
+    root: path.resolve(path.dirname(new URL(root).pathname)),
     href,
     importmap,
     denoConfig,
