@@ -13,7 +13,7 @@ export const handler = async (config: MicroConfig) => {
   return async (request: Request) => {
     const url = urlFromRequest(request);
     const entrypoint = path.join(
-      url.href,
+      url.origin,
       httpAssetsRoot,
       cache.version(),
       entrypoints.server

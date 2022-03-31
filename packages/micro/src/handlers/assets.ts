@@ -16,8 +16,8 @@ export const handler = (config: MicroConfig) => {
   return async (request: Request) => {
     const url = urlFromRequest(request);
     const relative = url.pathname.replace(regex, "");
-    const absolute = path.join(config.root, relative);
-
+    const absolute = path.join(config.root, relative)
+    
     try {
       const {
         code,
