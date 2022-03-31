@@ -1,12 +1,14 @@
 import { mime, path, readableStreamFromReader } from "../../deps.ts";
 import { headers } from "../constants.ts";
+import { urlFromRequest } from "../utils.ts";
 import { MicroConfig } from "./../config.ts";
 
 export const handler = (config: MicroConfig) => {
-  const root = path.join(config.root, 'public')
+  const root = path.join(config.root, "public");
 
-  return async (url: URL) => {
+  return async (request: Request) => {
     try {
+      const url = urlFromRequest(request);
       const fd = await Deno.open(path.join(root, url.pathname));
       const stream = readableStreamFromReader(fd);
       const contentType = mime.lookup(url.pathname);
@@ -18,7 +20,9 @@ export const handler = (config: MicroConfig) => {
           ...headers,
         },
       });
-    } catch (_) {
+    } catch (err) {
+      console.error(err);
+
       return new Response(null, {
         status: 404,
         headers: {

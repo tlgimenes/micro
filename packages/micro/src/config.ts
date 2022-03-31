@@ -81,7 +81,6 @@ const assertDependencies = (importmap: Deno.ImportMap) => {
 
 export const getConfig = async (
   root: string,
-  href: string,
   denoConfigPath: string,
 ) => {
   const denoConfig = await readDenoConfig(denoConfigPath);
@@ -89,7 +88,6 @@ export const getConfig = async (
 
   return ({
     root: path.resolve(path.dirname(new URL(root).pathname)),
-    href,
     importmap,
     denoConfig,
   });
