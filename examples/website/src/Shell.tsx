@@ -25,7 +25,13 @@ function Shell() {
           <Navbar />
         </header>
         <main className="min-h-screen">
-          <Suspense fallback={<div>...loading</div>}>
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center text-2xl font-thin min-h-screen">
+                ...loading
+              </div>
+            }
+          >
             <Main />
           </Suspense>
         </main>
