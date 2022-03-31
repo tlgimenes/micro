@@ -5,13 +5,15 @@ import { cache } from "../cache.ts";
 import { MicroConfig } from "../config.ts";
 import { entrypoints, headers, httpAssetsRoot, isDev } from "../constants.ts";
 import { getHtml } from "../Html.server.tsx";
+import { urlFromRequest } from "../utils.ts";
 
 export const handler = async (config: MicroConfig) => {
   const { Html, link } = await getHtml(config);
 
-  return async (url: URL) => {
+  return async (request: Request) => {
+    const url = urlFromRequest(request);
     const entrypoint = path.join(
-      config.href,
+      url.origin,
       httpAssetsRoot,
       cache.version(),
       entrypoints.server
