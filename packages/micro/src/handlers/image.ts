@@ -67,7 +67,7 @@ const transform = async (
 const formatFromAccept = (request: Request) => {
   const accepted = new Set(
     request.headers.get("accept")?.toLowerCase().split(",").map((s) =>
-      s.split(";")[0]
+      s.trim().split(";")[0]
     ),
   );
 
@@ -114,8 +114,11 @@ const optionsFromRequest = (request: Request) => {
 };
 
 const fetchImage = async (src: string) => {
-  const response = await fetch(src);
-  const buffer = await response.arrayBuffer();
+  const buffer = await fetch(src, {
+    headers: {
+      "accept": [...SUPPORTED_FORMATS.decode.values()].join(","),
+    },
+  }).then((res) => res.arrayBuffer());
 
   return new Uint8Array(buffer);
 };

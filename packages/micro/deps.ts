@@ -11,4 +11,4 @@ export { default as BabelPresetTypescript } from "https://esm.sh/@babel/preset-t
 export * as BabelPluginImportMap from "https://esm.sh/babel-plugin-import-map@1.0.0";
 
 // Images
-export * as ImageScript from "https://deno.land/x/imagescript@v1.2.12/mod.ts";
+export * as ImageScript from "https://deno.land/x/imagescript@v1.2.12/mod.ts"
