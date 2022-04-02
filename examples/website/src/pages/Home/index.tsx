@@ -7,7 +7,7 @@ export function Head() {
     <>
       <meta name="robots" content="index,follow" />
       <title>Micro.ts - A minimalistic framework</title>
-      <meta name="description" content="React meets Deno"/>
+      <meta name="description" content="React meets Deno" />
     </>
   );
 }

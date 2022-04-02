@@ -9,3 +9,6 @@ export { default as Babel } from "https://esm.sh/@babel/core";
 export { default as BabelPresetReact } from "https://esm.sh/@babel/preset-react";
 export { default as BabelPresetTypescript } from "https://esm.sh/@babel/preset-typescript";
 export * as BabelPluginImportMap from "https://esm.sh/babel-plugin-import-map@1.0.0";
+
+// Images
+export * as ImageScript from "https://deno.land/x/imagescript@v1.2.12/mod.ts";

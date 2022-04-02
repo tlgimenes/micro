@@ -1,8 +1,10 @@
+import { IMAGES_PATH } from "./@components/Image/useImage.ts";
 import { colors, mime, serve as stdServe } from "./deps.ts";
 import { getConfig } from "./src/config.ts";
 import { headers, httpAssetsRoot, wsRefreshRoot } from "./src/constants.ts";
 import { handler as assetsHandler } from "./src/handlers/assets.ts";
 import { handler as htmlHandler } from "./src/handlers/html.tsx";
+import { handler as imageHandler } from "./src/handlers/image.ts";
 import { handler as publicHandler } from "./src/handlers/public.ts";
 import { handler as refreshHandler } from "./src/handlers/refresh.ts";
 import { urlFromRequest } from "./src/utils.ts";
@@ -54,11 +56,13 @@ export const getHandler = async ({
     html,
     files,
     refresh,
+    image,
   ] = await Promise.all([
     assetsHandler(config),
     htmlHandler(config),
     publicHandler(config),
     refreshHandler(config),
+    imageHandler(config),
   ]);
 
   const handler = async (request: Request) => {
@@ -70,6 +74,8 @@ export const getHandler = async ({
         ? refresh(request)
         : url.pathname.startsWith(httpAssetsRoot)
         ? await assets(request)
+        : url.pathname.startsWith(IMAGES_PATH)
+        ? await image(request)
         : contentType === false || contentType === "text/html"
         ? await html(request)
         : await files(request);
